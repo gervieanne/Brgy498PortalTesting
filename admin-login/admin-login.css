@@ -1,0 +1,687 @@
+* {
+  font-family: Poppins;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.choosing-page {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  position: relative;
+  min-height: 100vh;
+}
+
+.left-landingpage {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 50px 100px;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  background-color: #21205d;
+  color: #ffffff;
+  min-height: 80vh;
+  animation: fadeInLeft 0.8s ease-out;
+}
+
+.barangay-logo {
+  width: 200px;
+  position: relative;
+  animation: scaleIn 1s ease-out 0.2s both;
+}
+
+.left-landingpage h1 {
+  color: #f5fd12;
+  font-size: 32px;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.sub-content {
+  font-size: 17px;
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.footer {
+  animation: fadeInUp 1s ease-out 0.8s both;
+}
+
+.right-landingpage {
+  background-color: #eeeeee;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  overflow-y: auto;
+  position: relative;
+  min-height: 100vh;
+  animation: fadeInRight 0.8s ease-out;
+}
+
+.welcome {
+  color: #21205d;
+  font-size: 40px;
+  margin-bottom: 10px;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.blueback-btn {
+  position: absolute;
+  width: 55px;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.blueback-btn img {
+  width: 100%;
+  height: auto;
+}
+
+.blueback-btn:hover {
+  scale: 1.05;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.down-arrow {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: #00000082;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+  z-index: 100;
+  border: 2px solid #f5fd12;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.down-arrow:hover {
+  scale: 1.1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+.down-arrow svg {
+  width: 24px;
+  height: 24px;
+  stroke: #f5fd12;
+  stroke-width: 2;
+  fill: none;
+}
+
+.message-box {
+  position: relative;
+  width: 90%;
+  margin-top: 10px;
+}
+
+.message-box textarea {
+  width: 93%;
+  height: 130px;
+  border-radius: 12px;
+  border: none;
+  background: #d9d9d9;
+  padding: 15px 50px 15px 15px;
+  resize: none;
+  font-family: Poppins;
+  font-size: 14px;
+}
+
+.send-btn {
+  position: absolute;
+  right: -25px;
+  bottom: 20px;
+  width: 100px;
+  height: 38px;
+  border-radius: 5px;
+  background: #21205d;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 15px;
+}
+
+.send-btn:hover {
+  background: #21205d;
+  transform: scale(1.05);
+}
+
+/* Smooth Fade Animation */
+.fade {
+  opacity: 0;
+  transition: 0.2s ease-in-out;
+}
+
+.fade.show {
+  transition: 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.form-container {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subheader {
+  padding-bottom: 50px;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.form-header {
+  text-align: start;
+  font-size: 20px;
+  padding-bottom: 5px;
+  align-self: flex-start;
+  width: 90%;
+  animation: slideIn 0.8s ease-out both;
+}
+
+.form-header:nth-of-type(1) {
+  animation-delay: 0.7s;
+}
+
+.form-header:nth-of-type(2) {
+  animation-delay: 0.9s;
+}
+
+input {
+  align-items: start;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background: #d9d9d9;
+  width: 90%;
+  height: 45px;
+  border: none;
+  padding: 0px 20px;
+  animation: slideIn 0.8s ease-out both;
+  transition: all 0.3s ease;
+}
+
+input[type="text"] {
+  animation-delay: 0.8s;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #21205d;
+  transform: translateY(-2px);
+}
+
+/* Password input wrapper for toggle button */
+.password-wrapper {
+  position: relative;
+  width: 90%;
+  margin-bottom: 20px;
+  animation: slideIn 0.8s ease-out 1s both;
+}
+
+.password-wrapper input {
+  width: 91%;
+  margin-bottom: 0;
+  padding-right: 50px;
+  animation: none;
+}
+
+.toggle-password {
+  position: absolute;
+  justify-self: end;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.toggle-password:hover {
+  opacity: 0.7;
+}
+
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+  stroke: #21205d;
+  fill: none;
+  stroke-width: 2;
+}
+
+.sign-in {
+  font-weight: semi-bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #eeeeee;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  background: #21205d;
+  transition: 0.3s ease;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  animation: slideIn 0.8s ease-out 1.2s both;
+}
+
+.sign-in:hover {
+  color: #f5fd12;
+  scale: 1.03;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.forgot-password {
+  margin-top: 10px;
+  animation: fadeIn 1s ease-out 1.4s both;
+}
+
+/* BREAKPOINT 1: LARGE DESKTOP (1440px and above) */
+@media (min-width: 1440px) {
+  body {
+    overflow: hidden;
+  }
+
+  .left-landingpage {
+    padding: 50px 120px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+
+  .toggle-password {
+    right: -25px;
+  }
+}
+
+/* BREAKPOINT 2: DESKTOP (1024px to 1439px) */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  body {
+    overflow: hidden;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .subheader {
+    padding: 0px 40px;
+  }
+
+  input {
+    width: 80%;
+    margin-bottom: 0px;
+  }
+
+  .password-wrapper {
+    width: 80%;
+    margin: 0px 25px 20px 25px;
+  }
+
+  .password-wrapper input {
+    width: 92%;
+    margin: 0;
+  }
+
+  .toggle-password {
+    right: -25px;
+  }
+
+  .sign-in {
+    width: 90%;
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+
+  .form-header {
+    margin-top: 30px;
+    margin-left: 25px;
+  }
+
+  .left-landingpage {
+    padding: 40px 60px;
+    gap: 40px;
+  }
+
+  .left-landingpage h1 {
+    font-size: 28px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .sub-content {
+    font-size: 16px;
+    padding-bottom: 50px;
+  }
+
+  .footer {
+    padding: 0px 50px 0px 50px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+}
+
+/* BREAKPOINT 3: TABLET (768px to 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 40px 30px;
+    justify-content: center;
+    gap: 30px;
+    min-height: 91vh;
+  }
+
+  .right-landingpage {
+    min-height: 90vh;
+    padding: 50px 20px;
+  }
+
+  .barangay-logo {
+    width: 150px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .sub-content {
+    font-size: 15px;
+    padding-bottom: 30px;
+  }
+
+  .down-arrow {
+    display: flex;
+  }
+}
+
+/* BREAKPOINT 4: MOBILE (480px to 767px) */
+@media (max-width: 767px) and (min-width: 480px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 35px 20px;
+    gap: 25px;
+    min-height: 92vh;
+    justify-content: center;
+  }
+
+  .left-landingpage h1 {
+    font-size: 22px;
+  }
+
+  .right-landingpage {
+    min-height: 92vh;
+    padding: 35px 15px;
+  }
+
+  .footer {
+    font-size: 14px;
+    padding: 0px 50px 0px 50px;
+  }
+
+  .barangay-logo {
+    width: 130px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .sub-content {
+    font-size: 14px;
+    padding-bottom: 20px;
+  }
+
+  .down-arrow {
+    display: flex;
+    background-color: #21205d;
+    bottom: 20px;
+    width: 45px;
+    height: 45px;
+  }
+
+  input {
+    width: 80%;
+    margin: 0 auto 20px auto;
+  }
+
+  .password-wrapper {
+    width: 80%;
+    margin: 0 auto 20px auto;
+  }
+
+  .password-wrapper input {
+    width: 90%;
+    margin-left: -20px;
+  }
+
+  .sign-in {
+    width: 92%;
+    margin: 10px auto;
+  }
+}
+
+/* BREAKPOINT 5: SMALL MOBILE (below 480px) */
+@media (max-width: 479px) and (min-width: 0px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .right-landingpage {
+    min-height: 85vh;
+    padding: 100px 12px 0px 12px;
+    justify-content: start;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 25px 15px;
+    gap: 20px;
+    min-height: 95vh;
+    justify-content: center;
+  }
+
+  .footer {
+    font-size: 12px;
+  }
+
+  .barangay-logo {
+    width: 110px;
+  }
+
+  .left-landingpage h1 {
+    font-size: 22px;
+  }
+
+  .sub-content {
+    font-size: 12px;
+    padding-bottom: 15px;
+  }
+
+  .down-arrow {
+    display: flex;
+    bottom: 15px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .down-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .subheader {
+    padding: 0px 25px 25px 0px;
+    margin: 0px 15px;
+  }
+
+  .form-header {
+    padding: 0px 20px;
+  }
+
+  input {
+    width: 80%;
+    margin: 0 auto 20px auto;
+  }
+
+  .password-wrapper {
+    width: 71%;
+    margin-left: 15px;
+  }
+
+  .password-wrapper input {
+    width: 100%;
+    margin: 0;
+  }
+
+  .sign-in {
+    width: 92%;
+    margin: 10px auto;
+  }
+
+  .forgot-password {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .left-landingpage h1 {
+    font-size: 18px;
+  }
+}

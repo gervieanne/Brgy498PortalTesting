@@ -1,0 +1,277 @@
+:root {
+  --primary: #21205d; /* Dark Blue */
+  --hover: #2c2b85; /* Medium Blue for hover */
+  --accent: #f5fd12; /* Yellow/Gold Accent */
+  --card-bg: #e4e4e4; /* Light Gray card background */
+  --body-bg: #f1f1f1; /* Overall light gray background */
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: var(--body-bg);
+}
+
+/* ====================================
+    LAYOUT
+==================================== */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--primary);
+  color: white;
+  width: 350px;
+  padding: 14px 30px;
+  flex-shrink: 0;
+  transition: 0.3s ease-in-out;
+  z-index: 2;
+}
+
+.barangay-logo {
+  display: block;
+  margin: 20px auto 15px;
+  width: 40%;
+}
+
+.sidebar h2 {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 0; /* Ensures the list starts right after h2 margin */
+}
+
+.sidebar ul li {
+  margin-bottom: 1px;
+}
+
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: white;
+  gap: 8px;
+  padding: 14px 30px;
+  margin: 0px -30px 8px -30px;
+  border-radius: 0;
+  transition: 0.3s;
+  text-align: left;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: var(--hover);
+  color: var(--accent);
+}
+
+.burger-menu {
+  display: none;
+  background: none;
+  border: none;
+  color: #21205d;
+  font-size: 28px;
+  cursor: pointer;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 101;
+  padding: 8px;
+  line-height: 1;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  /* Adjusted right padding to 20px for tighter edge */
+  padding: 0 20px 25px 25px;
+}
+
+/* Top bar with time on the right */
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: transparent;
+  padding: 25px 0 10px 0;
+  width: 100%;
+}
+
+.time-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-user span#time {
+  font-size: 16px;
+  color: #444;
+}
+
+.logout-logo {
+  width: 45px;
+  height: 45px;
+  transition: 0.3s ease-in-out;
+}
+
+.logout-logo:hover {
+  border-radius: 50px;
+  background-color: #c0c0c0;
+  transform: scale(1.1);
+}
+
+/* Header Bar (The dark blue announcement bar) */
+.header-bar {
+  background-color: var(--primary);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 5px 5px 0 0;
+}
+
+.header-bar h3 {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* Announcement Section (The white scrollable box) */
+.announcement-list {
+  background: white;
+  padding: 25px;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* Card Design */
+.announcement-card {
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: none;
+  border-left: 5px solid #21205d;
+}
+
+.announcement-card img {
+  justify-self: center;
+  object-fit: cover;
+  width: 100%;
+  height: 80vh;
+}
+
+.announcement-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.announcement-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Details Section (Date, Time, Venue) */
+.announcement-card .details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    width: 350px;
+    transform: translateX(-100%);
+    background-color: #21205d;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .burger-menu {
+    display: block;
+    font-size: 28px;
+  }
+
+  .time-user {
+    display: flex;
+    flex-direction: row-reverse;
+    position: relative;
+    top: -5px;
+    right: 80%;
+  }
+
+  .main-content {
+    margin-left: -350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .announcement-card {
+    padding: 15px;
+  }
+
+  .sidebar {
+    width: 350px;
+  }
+
+  .sidebar h2 {
+    font-size: 16px;
+  }
+
+  .time-user {
+    right: 70%;
+  }
+}
+
+@media (max-width: 366px) {
+  .sidebar {
+    width: 300px;
+  }
+
+  .sidebar h2 {
+    font-size: 14px;
+  }
+
+  .main-content {
+    margin-left: -300px;
+  }
+
+  .burger-menu {
+    left: 85%;
+  }
+
+  .time-user {
+    right: 59%;
+  }
+}

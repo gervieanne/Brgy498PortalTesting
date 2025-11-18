@@ -1,0 +1,594 @@
+* {
+  font-family: Poppins;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.choosing-page {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  position: relative;
+  min-height: 100vh;
+}
+
+.left-landingpage {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 50px 100px;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  background-color: #21205d;
+  color: #ffffff;
+  min-height: 80vh;
+}
+
+.barangay-logo {
+  width: 200px;
+  position: relative;
+}
+
+.left-landingpage h1 {
+  color: #f5fd12;
+  font-size: 32px;
+}
+
+.sub-content {
+  font-size: 17px;
+}
+
+.right-landingpage {
+  background-color: #eeeeee;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  overflow-y: auto;
+  position: relative;
+  min-height: 100vh;
+}
+
+.blueback-btn {
+  position: absolute;
+  width: 55px;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.blueback-btn img {
+  width: 100%;
+  height: auto;
+}
+
+.blueback-btn:hover {
+  scale: 1.05;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.down-arrow {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: #00000082;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+  z-index: 100;
+  border: 2px solid #f5fd12;
+}
+
+.down-arrow:hover {
+  scale: 1.1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.down-arrow svg {
+  width: 24px;
+  height: 24px;
+  stroke: #f5fd12;
+  stroke-width: 2;
+  fill: none;
+}
+
+.welcome {
+  color: #21205d;
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.form-container {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subheader {
+  padding-bottom: 50px;
+}
+
+.form-header {
+  text-align: start;
+  font-size: 20px;
+  padding-bottom: 5px;
+  align-self: flex-start;
+  width: 90%;
+}
+
+input {
+  align-items: start;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background: #d9d9d9;
+  width: 90%;
+  height: 45px;
+  border: none;
+  padding: 0px 20px;
+}
+
+/* Password input wrapper for toggle button */
+.password-wrapper {
+  position: relative;
+  width: 90%;
+  margin-bottom: 20px;
+}
+
+.password-wrapper input {
+  width: 92%;
+  margin-bottom: 0;
+  padding-right: 50px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.toggle-password:hover {
+  opacity: 0.7;
+}
+
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+  stroke: #21205d;
+  fill: none;
+  stroke-width: 2;
+}
+
+form {
+  width: 100%;
+}
+
+.sign-in {
+  font-weight: semi-bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #eeeeee;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  background: #21205d;
+  transition: 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.sign-in:hover {
+  color: #f5fd12;
+  scale: 1.03;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sign-in:active {
+  background-color: #3b3aa0;
+}
+
+.forgot-password {
+  margin-top: 10px;
+}
+
+#forgotModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#forgotModal.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h2 {
+  color: #21205d;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 15px;
+  color: #444;
+}
+
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #21205d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.modal-content button:hover {
+  color: #f5fd12;
+}
+
+/* BREAKPOINT 1: LARGE DESKTOP (1440px and above) */
+@media (min-width: 1440px) {
+  body {
+    overflow: hidden;
+  }
+
+  .left-landingpage {
+    padding: 50px 120px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+}
+
+/* BREAKPOINT 2: DESKTOP (1024px to 1439px) */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  body {
+    overflow: hidden;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .subheader {
+    padding: 0px 40px;
+  }
+
+  input {
+    margin: 0px 25px;
+    width: 80%;
+  }
+
+  .password-wrapper {
+    width: 80%;
+    margin: 0px 25px 20px 25px;
+  }
+
+  .password-wrapper input {
+    width: 92.5%;
+    margin: 0;
+  }
+
+  .sign-in {
+    width: 90%;
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+
+  .form-header {
+    margin-top: 30px;
+    margin-left: 20px;
+  }
+
+  .left-landingpage {
+    padding: 40px 60px;
+    gap: 40px;
+  }
+
+  .left-landingpage h1 {
+    font-size: 26px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .sub-content {
+    font-size: 16px;
+    padding-bottom: 50px;
+  }
+
+  .footer {
+    padding: 0px 00px 0px 00px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+}
+
+/* BREAKPOINT 3: TABLET (768px to 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 40px 30px;
+    justify-content: center;
+    gap: 30px;
+    min-height: 91vh;
+  }
+
+  .right-landingpage {
+    min-height: 90vh;
+    padding: 50px 20px;
+  }
+
+  .barangay-logo {
+    width: 150px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .sub-content {
+    font-size: 15px;
+    padding-bottom: 30px;
+    margin: 0px 20px;
+  }
+
+  .down-arrow {
+    display: flex;
+  }
+}
+
+/* BREAKPOINT 4: MOBILE (480px to 767px) */
+@media (max-width: 767px) and (min-width: 480px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 35px 20px;
+    gap: 30px;
+    min-height: 92vh;
+    justify-content: center;
+  }
+
+  .left-landingpage h1 {
+    font-size: 26px;
+  }
+
+  .right-landingpage {
+    min-height: 92vh;
+    padding: 35px 15px;
+  }
+
+  .footer {
+    font-size: 16px;
+  }
+
+  .barangay-logo {
+    width: 150px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .sub-content {
+    font-size: 15px;
+    margin: 0px 20px;
+    padding-bottom: 20px;
+  }
+
+  .down-arrow {
+    display: flex;
+    background-color: #21205d;
+    bottom: 20px;
+    width: 45px;
+    height: 45px;
+  }
+
+  input {
+    width: 92%;
+    margin: 0 auto 20px 0px;
+  }
+
+  .password-wrapper {
+    width: 92%;
+    margin: 0 auto 20px 0px;
+  }
+
+  .password-wrapper input {
+    width: 92%;
+    margin: 0;
+  }
+
+  .sign-in {
+    width: 100%;
+    margin: 10px auto;
+  }
+}
+
+/* BREAKPOINT 5: SMALL MOBILE (below 480px) */
+@media (max-width: 479px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 25px 15px;
+    gap: 20px;
+    min-height: 95vh;
+    justify-content: center;
+  }
+
+  .right-landingpage {
+    min-height: 85vh;
+    padding: 100px 12px 0px 12px;
+    justify-content: center;
+  }
+
+  .footer {
+    font-size: 12px;
+  }
+
+  .barangay-logo {
+    width: 125px;
+  }
+
+  .left-landingpage h1 {
+    font-size: 18px;
+  }
+
+  .sub-content {
+    font-size: 12px;
+    padding-bottom: 15px;
+  }
+
+  .down-arrow {
+    display: flex;
+    bottom: 15px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .down-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .subheader {
+    padding: 0px 15px 25px 15px;
+  }
+
+  .form-header {
+    padding: 0px 20px;
+  }
+
+  input {
+    width: 80%;
+    margin: 0 auto 20px 0px;
+  }
+
+  .password-wrapper {
+    width: 70%;
+    margin-left: 15px;
+  }
+
+  .password-wrapper input {
+    width: 100%;
+    margin-left: 5px;
+  }
+
+  .sign-in {
+    width: 92%;
+    margin: 10px auto;
+  }
+
+  .forgot-password {
+    padding: 0 20px;
+  }
+
+  .toggle-password {
+    right: -60px;
+  }
+}
+
+@media (max-width: 365px) {
+  input {
+    width: 80%;
+    margin: 0 auto 20px 10px;
+  }
+
+  .password-wrapper {
+    width: 78%;
+    margin-left: 15px;
+  }
+
+  .password-wrapper input {
+    width: 90%;
+    margin-left: 5px;
+  }
+
+  .sign-in {
+    width: 92%;
+    margin: 10px auto;
+  }
+
+  .forgot-password {
+    padding: 0 20px;
+  }
+
+  .toggle-password {
+    right: -35px;
+  }
+}

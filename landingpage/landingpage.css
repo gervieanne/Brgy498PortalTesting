@@ -1,0 +1,565 @@
+* {
+  font-family: Poppins;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.choosing-page {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  position: relative;
+  min-height: 100vh;
+}
+
+.left-landingpage {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 50px 100px;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  background-color: #21205d;
+  color: #ffffff;
+  min-height: 80vh;
+  overflow: hidden;
+  animation: fadeInLeft 0.8s ease-out;
+}
+
+.barangay-logo {
+  width: 200px;
+  position: relative;
+  flex-shrink: 0;
+  animation: scaleIn 1s ease-out 0.2s both;
+}
+
+h1 {
+  color: #f5fd12;
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.sub-content {
+  text-align: center;
+  width: 110%;
+  font-size: 19px;
+  line-height: 1.7;
+  flex-shrink: 0;
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.footer {
+  flex-shrink: 0;
+  animation: fadeInUp 1s ease-out 0.8s both;
+}
+
+.right-landingpage {
+  padding: 0px;
+  background-color: #eeeeee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  overflow-y: auto;
+  position: relative;
+  min-height: 100vh;
+  animation: fadeInRight 0.8s ease-out;
+}
+
+.right-heading {
+  color: #21205d;
+  display: flex;
+  flex-direction: column;
+  font-size: 40px;
+  padding: 0;
+  margin: 0;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.right-sub {
+  padding-bottom: 30px;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.down-arrow {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.51);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+  z-index: 100;
+  border: 2px solid #f5fd12;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.down-arrow:hover {
+  scale: 1.1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+.down-arrow svg {
+  width: 24px;
+  height: 24px;
+  stroke: #f5fd12;
+  stroke-width: 2;
+  fill: none;
+}
+
+.admin-login,
+.user-login {
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+.admin-card,
+.user-card {
+  border-radius: 30px;
+  background: #d9d9d9;
+  width: 500px;
+  height: 150px;
+  flex-shrink: 0;
+  padding: 30px 0px;
+  margin-bottom: 25px;
+  transition: 0.2s ease-in-out;
+  animation: slideUp 0.8s ease-out both;
+}
+
+.admin-card {
+  animation-delay: 0.7s;
+}
+
+.user-card {
+  animation-delay: 0.9s;
+}
+
+.admin-card p,
+.user-card p {
+  padding: 0 70px;
+}
+
+.user-card p {
+  padding: 0 80px;
+}
+
+.admin-card:hover,
+.user-card:hover {
+  scale: 1.03;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.admin-card:hover h2,
+.user-card:hover h2 {
+  color: #21205d;
+}
+
+.admin-card:active,
+.user-card:active {
+  background-color: #ffffff;
+}
+
+/* BREAKPOINT 1: LARGE DESKTOP (1440px and above) */
+@media (min-width: 1440px) {
+  body {
+    overflow: hidden;
+  }
+
+  .left-landingpage {
+    padding: 50px 120px;
+  }
+
+  .admin-card,
+  .user-card {
+    width: 550px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+}
+
+/* BREAKPOINT 2: DESKTOP (1024px to 1439px) */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  body {
+    overflow: hidden;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .left-landingpage {
+    padding: 40px 60px;
+    gap: 40px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .sub-content {
+    font-size: 16px;
+    padding-bottom: 50px;
+  }
+
+  .footer {
+    font-size: 15px;
+    padding: 0px 50px 0px 50px;
+  }
+
+  .right-heading {
+    font-size: 36px;
+  }
+
+  .admin-card,
+  .user-card {
+    width: 420px;
+    height: 140px;
+  }
+
+  .admin-card p,
+  .user-card p {
+    padding: 0 50px;
+  }
+
+  .down-arrow {
+    display: none;
+  }
+}
+
+/* BREAKPOINT 3: TABLET (768px to 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 40px 30px;
+    gap: 50px;
+    min-height: 92vh;
+    max-height: none;
+    justify-content: center;
+  }
+
+  .right-landingpage {
+    min-height: 90vh;
+    padding: 50px 20px;
+  }
+
+  .barangay-logo {
+    width: 170px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .sub-content {
+    width: 90%;
+    line-height: 1.7;
+    font-size: 20px;
+    padding-bottom: 30px;
+  }
+
+  .footer {
+    font-size: 20px;
+  }
+
+  .right-heading {
+    font-size: 40px;
+  }
+
+  .right-sub {
+    padding-bottom: 50px;
+  }
+
+  .admin-card,
+  .user-card {
+    width: 100%;
+    max-width: 420px;
+    height: 150px;
+    padding: 20px 0px;
+    margin-bottom: 20px;
+  }
+
+  .admin-card p,
+  .user-card p {
+    padding: 0 40px;
+    font-size: 14px;
+  }
+
+  .down-arrow {
+    display: flex;
+  }
+}
+
+/* BREAKPOINT 4: MOBILE (480px to 767px) */
+@media (max-width: 767px) and (min-width: 480px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 35px 20px;
+    gap: 50px;
+    min-height: 92vh;
+    max-height: none;
+    justify-content: center;
+  }
+
+  .right-landingpage {
+    min-height: 93vh;
+    padding: 35px 15px;
+  }
+
+  .footer {
+    font-size: 14px;
+    padding: 0px 50px 0px 50px;
+  }
+
+  .barangay-logo {
+    width: 150px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .sub-content {
+    width: 92%;
+    font-size: 14px;
+    padding-bottom: 20px;
+  }
+
+  .right-heading {
+    font-size: 35px;
+  }
+
+  .right-sub {
+    padding-bottom: 40px;
+  }
+
+  .admin-card,
+  .user-card {
+    width: 100%;
+    max-width: 360px;
+    height: 160px;
+    padding: 15px 0px;
+    margin-bottom: 15px;
+  }
+
+  .admin-card p,
+  .user-card p {
+    padding: 0 40px;
+    font-size: 13px;
+  }
+
+  .down-arrow {
+    display: flex;
+    bottom: 20px;
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* BREAKPOINT 5: SMALL MOBILE (below 480px) */
+@media (max-width: 479px) {
+  body {
+    overflow-x: visible;
+  }
+
+  .choosing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-landingpage {
+    padding: 25px 15px;
+    gap: 40px;
+    min-height: 95vh;
+    max-height: none;
+    justify-content: center;
+  }
+
+  .right-landingpage {
+    justify-content: center;
+    min-height: 90vh;
+    padding: 70px 12px;
+  }
+
+  .footer {
+    font-size: 12px;
+  }
+
+  .barangay-logo {
+    width: 140px;
+  }
+
+  h1 {
+    font-size: 17px;
+  }
+
+  .sub-content {
+    width: 95%;
+    font-size: 12px;
+    padding-bottom: 15px;
+  }
+
+  .right-heading {
+    font-size: 30px;
+  }
+
+  .right-sub {
+    padding-bottom: 40px;
+  }
+
+  .admin-card,
+  .user-card {
+    width: 100%;
+    max-width: 300px;
+    height: 150px;
+    padding: 12px 0px;
+    margin-bottom: 12px;
+  }
+
+  .admin-logo {
+    width: 35px;
+  }
+
+  .user-logo {
+    width: 25px;
+  }
+
+  .admin-card,
+  .user-card {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .admin-card p,
+  .user-card p {
+    padding: 0 20px;
+    font-size: 12px;
+  }
+
+  .down-arrow {
+    display: flex;
+    bottom: 15px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .down-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+}
