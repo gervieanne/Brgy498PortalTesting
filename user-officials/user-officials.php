@@ -82,7 +82,7 @@ $result = $conn->query($sql);
             <p id="clock">12:00:00 AM</p>
             <a href="#" id="logoutBtn">
               <img
-                src="../images/logout.png"
+                src="../images/logoutbtn.png"
                 alt="logout"
                 class="logout-logo"
                 id="logoutBtn"

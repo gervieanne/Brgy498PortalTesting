@@ -122,11 +122,12 @@ body {
 .logout-logo {
   width: 45px;
   height: 45px;
+  border-radius: 8px;
+  padding: 5px;
   transition: 0.3s ease-in-out;
 }
 
 .logout-logo:hover {
-  border-radius: 50px;
   background-color: #c0c0c0;
   transform: scale(1.1);
 }

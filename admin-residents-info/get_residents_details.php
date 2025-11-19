@@ -34,7 +34,7 @@ $sql = "SELECT
     up.occupation,
     up.citizenship,
     up.relation_to_household,
-    COALESCE(NULLIF(up.contact_number, 0), uc.contact_number) as contact_number,
+    COALESCE(NULLIF(up.contact_number, ''), uc.contact_number) as contact_number,
     COALESCE(NULLIF(up.email, ''), uc.email) as email,
     uc.username
 FROM userprofile498 up

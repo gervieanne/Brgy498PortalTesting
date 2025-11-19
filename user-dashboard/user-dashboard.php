@@ -87,10 +87,12 @@ $stmt->close();
 $announcements = [];
 $check_table = $conn->query("SHOW TABLES LIKE 'announcements'");
 if ($check_table && $check_table->num_rows > 0) {
+    // Show announcements that are scheduled for now/past OR were created in the last hour (to show immediately when posted)
     $sql_announcements = "SELECT * FROM announcements 
                           WHERE send_to IN ('all', 'residents') 
-                          AND scheduled_date <= NOW() 
-                          ORDER BY scheduled_date DESC 
+                          AND (scheduled_date <= DATE_ADD(NOW(), INTERVAL 1 MINUTE) 
+                               OR created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR))
+                          ORDER BY scheduled_date DESC, created_at DESC 
                           LIMIT 3";
     $result_announcements = $conn->query($sql_announcements);
     if ($result_announcements && $result_announcements->num_rows > 0) {
@@ -167,10 +169,9 @@ $conn->close();
                     <div class="time-and-logo">
                         <p id="time">12:00:00 AM</p>
                         <a href="#" id="logoutBtn">
-                            <img src="../images/logout.png" alt="logout" class="logout-logo"/>
+                            <img src="../images/logoutbtn.png" alt="logout" class="logout-logo"/>
                         </a>
                     </div>
-                    <p class="right-sub">Home/Dashboard</p>
                 </div>
             </header>
 

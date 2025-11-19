@@ -197,7 +197,7 @@ $result = $conn->query($sql);
           <div class="time-and-logo">
             <p id="clock">12:00:00 AM</p>
             <a href="#" id="logoutBtn">
-              <img src="../images/logout.png" class="logout-logo" />
+              <img src="../images/logoutbtn.png" class="logout-logo" />
             </a>
 
           </div>
@@ -342,6 +342,19 @@ $result = $conn->query($sql);
       </div>
     </div>
 
+    <!-- Edit Confirmation Modal -->
+    <div id="editConfirmModal" class="edit-confirm-modal">
+      <div class="edit-confirm-modal-content">
+        <div class="edit-confirm-modal-icon">✏️</div>
+        <h2>Edit Official</h2>
+        <p>Are you sure you want to edit this official's information?</p>
+        <div class="edit-confirm-modal-buttons">
+          <button class="edit-confirm-btn-cancel" id="cancelEditConfirm">No, Cancel</button>
+          <button class="edit-confirm-btn-confirm" id="confirmEditConfirm">Yes, Edit</button>  
+        </div>
+      </div>
+    </div>
+
     <!-- Delete Official Modal -->
      <div id="deleteModal" class="delete-modal">
       <div class="delete-modal-content">
@@ -381,7 +394,30 @@ $result = $conn->query($sql);
         document.getElementById('addModal').style.display = 'none';
       }
       
+      // Store edit data temporarily
+      let pendingEditData = null;
+
       function openEditModal(id, name, position, imagePath) {
+        // Store the edit data
+        pendingEditData = {
+          id: id,
+          name: name,
+          position: position,
+          imagePath: imagePath
+        };
+        
+        // Show confirmation modal first
+        const confirmModal = document.getElementById('editConfirmModal');
+        if (confirmModal) {
+          confirmModal.style.display = 'flex';
+        }
+      }
+      
+      function proceedWithEdit() {
+        if (!pendingEditData) return;
+        
+        const { id, name, position, imagePath } = pendingEditData;
+        
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_name').value = name;
         document.getElementById('edit_position').value = position;
@@ -401,34 +437,120 @@ $result = $conn->query($sql);
           photoWrapper.style.display = 'none';
         }
         
+        // Close confirmation modal and open edit modal
+        closeEditConfirmModal();
         document.getElementById('editModal').style.display = 'block';
+        
+        // Clear pending data
+        pendingEditData = null;
+      }
+      
+      function closeEditConfirmModal() {
+        const confirmModal = document.getElementById('editConfirmModal');
+        if (confirmModal) {
+          confirmModal.style.display = 'none';
+        }
+        pendingEditData = null;
       }
       
       function closeEditModal() {
         document.getElementById('editModal').style.display = 'none';
       }
       
+      // Make functions globally accessible
+      window.openEditModal = openEditModal;
+      window.closeEditConfirmModal = closeEditConfirmModal;
+      
       
 
      let deleteOfficialId = null;
 
      function deleteOfficial(id) {
-        deleteOfficialId = id;
-        document.getElementById('deleteModal').style.display = 'block';
+        // Validate and set the ID properly
+        const officialId = parseInt(id);
+        if (isNaN(officialId) || officialId <= 0) {
+          console.error('Invalid official ID:', id);
+          return;
+        }
+        
+        // Reset and set the ID
+        deleteOfficialId = null;
+        deleteOfficialId = officialId;
+        
+        // Ensure modal is properly displayed
+        const modal = document.getElementById('deleteModal');
+        if (modal) {
+          modal.style.display = 'block';
+        } else {
+          console.error('Delete modal not found');
+        }
       }
+      
+      // Make function globally accessible
+      window.deleteOfficial = deleteOfficial;
 
       function closeDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'none';
+        const modal = document.getElementById('deleteModal');
+        if (modal) {
+          modal.style.display = 'none';
+        }
         deleteOfficialId = null;
       }
 
-      document.getElementById('cancelDelete').addEventListener('click', function() {
-        closeDeleteModal();
-      });
-
-      document.getElementById('confirmDelete').addEventListener('click', function() {
-        if (deleteOfficialId) {
-          window.location.href = 'admin-officials.php?delete_id=' + deleteOfficialId;
+      // Initialize delete functionality when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        const cancelBtn = document.getElementById('cancelDelete');
+        const confirmBtn = document.getElementById('confirmDelete');
+        
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeDeleteModal();
+          });
+        }
+        
+        if (confirmBtn) {
+          confirmBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (deleteOfficialId && deleteOfficialId > 0) {
+              window.location.href = 'admin-officials.php?delete_id=' + deleteOfficialId;
+            } else {
+              closeDeleteModal();
+            }
+          });
+        }
+        
+        // Initialize edit confirmation functionality
+        const cancelEditBtn = document.getElementById('cancelEditConfirm');
+        const confirmEditBtn = document.getElementById('confirmEditConfirm');
+        
+        if (cancelEditBtn) {
+          cancelEditBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeEditConfirmModal();
+          });
+        }
+        
+        if (confirmEditBtn) {
+          confirmEditBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            proceedWithEdit();
+          });
+        }
+        
+        // Handle clicking outside edit confirmation modal to close it
+        const editConfirmModal = document.getElementById('editConfirmModal');
+        if (editConfirmModal) {
+          editConfirmModal.addEventListener('click', function(event) {
+            if (event.target === this) {
+              closeEditConfirmModal();
+            }
+          });
         }
       });
 
@@ -513,11 +635,15 @@ $result = $conn->query($sql);
           }
         });
 
-        document.getElementById('deleteModal').addEventListener('click', function(event) {
-          if (event.target === this) {
-            closeDeleteModal();
-          }
-        });
+        // Handle clicking outside delete modal to close it
+        const deleteModal = document.getElementById('deleteModal');
+        if (deleteModal) {
+          deleteModal.addEventListener('click', function(event) {
+            if (event.target === this) {
+              closeDeleteModal();
+            }
+          });
+        }
     </script>
   </body>
 </html>

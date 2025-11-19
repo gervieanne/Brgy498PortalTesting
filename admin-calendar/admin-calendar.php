@@ -165,7 +165,7 @@ if (isset($_GET['get_events'])) {
           <div class="clock" id="clock">12:00:00 AM</div>
           <a href="#" id="logoutBtn">
             <img
-              src="../images/logout.png"
+              src="../images/logoutbtn.png"
               alt="logout"
               class="logout-logo"
             />
@@ -179,21 +179,45 @@ if (isset($_GET['get_events'])) {
           <div class="calendar-header">
             <h2 id="monthYear">January 2025</h2>
             <div class="calendar-nav">
-              <button id="prevMonth"><</button>
-              <button id="nextMonth">></button>
+              <button id="prevBtn"><</button>
+              <button id="nextBtn">></button>
             </div>
           </div>
-          <div class="calendar-grid">
-            <div class="calendar-days">
-              <div class="day-header">Sunday</div>
-              <div class="day-header">Monday</div>
-              <div class="day-header">Tuesday</div>
-              <div class="day-header">Wednesday</div>
-              <div class="day-header">Thursday</div>
-              <div class="day-header">Friday</div>
-              <div class="day-header">Saturday</div>
+          <div class="view-selector">
+            <button class="view-btn active" data-view="month">Month</button>
+            <button class="view-btn" data-view="week">Week</button>
+            <button class="view-btn" data-view="day">Day</button>
+            <button class="view-btn" data-view="year">Year</button>
+          </div>
+          <!-- Month View -->
+          <div class="calendar-view" id="monthView">
+            <div class="calendar-grid">
+              <div class="calendar-days">
+                <div class="day-header">Sunday</div>
+                <div class="day-header">Monday</div>
+                <div class="day-header">Tuesday</div>
+                <div class="day-header">Wednesday</div>
+                <div class="day-header">Thursday</div>
+                <div class="day-header">Friday</div>
+                <div class="day-header">Saturday</div>
+              </div>
+              <div class="calendar-dates" id="calendarDates"></div>
             </div>
-            <div class="calendar-dates" id="calendarDates"></div>
+          </div>
+          
+          <!-- Week View -->
+          <div class="calendar-view" id="weekView" style="display: none;">
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
+          
+          <!-- Day View -->
+          <div class="calendar-view" id="dayView" style="display: none;">
+            <div class="day-grid" id="dayGrid"></div>
+          </div>
+          
+          <!-- Year View -->
+          <div class="calendar-view" id="yearView" style="display: none;">
+            <div class="year-grid" id="yearGrid"></div>
           </div>
         </div>
 
@@ -350,6 +374,7 @@ if (isset($_GET['get_events'])) {
       let events = [];
       let selectedDate = null;
       let currentDate = new Date();
+      let currentView = 'month'; // Default view
 
       // Clock
       function updateClock() {
@@ -385,8 +410,26 @@ if (isset($_GET['get_events'])) {
           .then(data => {
             events = data;
             renderEvents();
-            renderCalendar();
+            renderCurrentView();
           });
+      }
+      
+      // Render based on current view
+      function renderCurrentView() {
+        switch(currentView) {
+          case 'day':
+            renderDayView();
+            break;
+          case 'week':
+            renderWeekView();
+            break;
+          case 'month':
+            renderMonthView();
+            break;
+          case 'year':
+            renderYearView();
+            break;
+        }
       }
 
       // Modal functionality
@@ -564,16 +607,76 @@ window.deleteEvent = deleteEvent;
           .join("");
       }
 
-      // Calendar functionality
-      function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
+      // View selector functionality
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const view = this.getAttribute('data-view');
+          switchView(view);
+        });
+      });
+      
+      function switchView(view) {
+        currentView = view;
+        
+        // Update active button
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-view') === view) {
+            btn.classList.add('active');
+          }
+        });
+        
+        // Hide all views
+        document.querySelectorAll('.calendar-view').forEach(v => {
+          v.style.display = 'none';
+        });
+        
+        // Show selected view
+        document.getElementById(view + 'View').style.display = 'block';
+        
+        // Update header and render
+        renderCurrentView();
+      }
+      
+      // Update header based on current view
+      function updateHeader() {
         const monthNames = [
           "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December",
         ];
-        document.getElementById("monthYear").textContent = `${monthNames[month]} ${year}`;
+        
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        
+        switch(currentView) {
+          case 'day':
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[month]} ${day}, ${year}`;
+            break;
+          case 'week':
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[weekStart.getMonth()]} ${weekStart.getDate()} - ${monthNames[weekEnd.getMonth()]} ${weekEnd.getDate()}, ${year}`;
+            break;
+          case 'month':
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[month]} ${year}`;
+            break;
+          case 'year':
+            document.getElementById("monthYear").textContent = `${year}`;
+            break;
+        }
+      }
+      
+      // Month View (original calendar functionality)
+      function renderMonthView() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        updateHeader();
 
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -628,16 +731,165 @@ window.deleteEvent = deleteEvent;
           calendarDates.appendChild(dateDiv);
         }
       }
+      
+      // Day View
+      function renderDayView() {
+        updateHeader();
+        const dayGrid = document.getElementById('dayGrid');
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        
+        const dayEvents = events.filter(e => e.date === dateString);
+        const today = new Date();
+        const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+        
+        let html = `<div class="day-view-header ${isToday ? 'today' : ''}">`;
+        html += `<h3>${formatDate(dateString)}</h3>`;
+        html += `<p>${dayEvents.length} event(s) scheduled</p>`;
+        html += `</div>`;
+        
+        html += `<div class="day-events">`;
+        if (dayEvents.length > 0) {
+          dayEvents.forEach(event => {
+            html += `<div class="day-event-item" onclick="previewAnnouncement(${event.id})">`;
+            html += `<div class="event-time">${formatTime(event.startTime)} - ${formatTime(event.endTime)}</div>`;
+            html += `<div class="event-title">${event.title}</div>`;
+            html += `</div>`;
+          });
+        } else {
+          html += `<div class="no-events-day">No events scheduled for this day</div>`;
+        }
+        html += `</div>`;
+        
+        dayGrid.innerHTML = html;
+      }
+      
+      // Week View
+      function renderWeekView() {
+        updateHeader();
+        const weekGrid = document.getElementById('weekGrid');
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+        
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let html = '<div class="week-days-header">';
+        dayNames.forEach(day => {
+          html += `<div class="week-day-header">${day}</div>`;
+        });
+        html += '</div>';
+        
+        html += '<div class="week-days-content">';
+        for (let i = 0; i < 7; i++) {
+          const currentDay = new Date(weekStart);
+          currentDay.setDate(weekStart.getDate() + i);
+          const year = currentDay.getFullYear();
+          const month = currentDay.getMonth();
+          const day = currentDay.getDate();
+          const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          
+          const dayEvents = events.filter(e => e.date === dateString);
+          const today = new Date();
+          const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+          
+          html += `<div class="week-day-cell ${isToday ? 'today' : ''}">`;
+          html += `<div class="week-day-number">${day}</div>`;
+          if (dayEvents.length > 0) {
+            dayEvents.slice(0, 3).forEach(event => {
+              html += `<div class="week-event-item" onclick="previewAnnouncement(${event.id})" title="${event.title}">`;
+              html += `<span class="event-time-small">${formatTime(event.startTime)}</span> ${event.title}`;
+              html += `</div>`;
+            });
+            if (dayEvents.length > 3) {
+              html += `<div class="more-events">+${dayEvents.length - 3} more</div>`;
+            }
+          }
+          html += `</div>`;
+        }
+        html += '</div>';
+        
+        weekGrid.innerHTML = html;
+      }
+      
+      // Year View
+      function renderYearView() {
+        updateHeader();
+        const yearGrid = document.getElementById('yearGrid');
+        const year = currentDate.getFullYear();
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December",
+        ];
+        
+        let html = '';
+        for (let m = 0; m < 12; m++) {
+          const monthEvents = events.filter(e => {
+            const eventDate = new Date(e.date);
+            return eventDate.getFullYear() === year && eventDate.getMonth() === m;
+          });
+          
+          html += `<div class="year-month-cell" onclick="switchToMonth(${m})">`;
+          html += `<div class="year-month-name">${monthNames[m]}</div>`;
+          html += `<div class="year-month-events">${monthEvents.length} event(s)</div>`;
+          html += `</div>`;
+        }
+        
+        yearGrid.innerHTML = html;
+      }
+      
+      function switchToMonth(monthIndex) {
+        currentDate.setMonth(monthIndex);
+        currentDate.setDate(1);
+        switchView('month');
+      }
+      
+      // Make functions globally accessible
+      window.switchToMonth = switchToMonth;
+      window.previewAnnouncement = previewAnnouncement;
 
-      document.getElementById("prevMonth").addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+      // Navigation buttons
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        navigateView('prev');
       });
 
-      document.getElementById("nextMonth").addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        navigateView('next');
       });
+      
+      function navigateView(direction) {
+        switch(currentView) {
+          case 'day':
+            if (direction === 'prev') {
+              currentDate.setDate(currentDate.getDate() - 1);
+            } else {
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+            break;
+          case 'week':
+            if (direction === 'prev') {
+              currentDate.setDate(currentDate.getDate() - 7);
+            } else {
+              currentDate.setDate(currentDate.getDate() + 7);
+            }
+            break;
+          case 'month':
+            if (direction === 'prev') {
+              currentDate.setMonth(currentDate.getMonth() - 1);
+            } else {
+              currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+            break;
+          case 'year':
+            if (direction === 'prev') {
+              currentDate.setFullYear(currentDate.getFullYear() - 1);
+            } else {
+              currentDate.setFullYear(currentDate.getFullYear() + 1);
+            }
+            break;
+        }
+        renderCurrentView();
+      }
 
       // Filter events by specific date
       function filterEventsByDate(date) {
@@ -709,6 +961,9 @@ window.deleteEvent = deleteEvent;
       window.filterEventsByDate = filterEventsByDate;
       window.clearDateFilter = clearDateFilter;
 
+      // Initialize default view
+      switchView('month');
+      
       // Initial load
       loadEvents();
     </script>

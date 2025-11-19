@@ -72,7 +72,7 @@ $user_id = $user['user_id'];
                 <div class="header-right">
                     <div id="clock">12:00:00 AM</div>
                     <a href="#" id="logoutBtn">
-                        <img src="../images/logout.png" alt="logout" class="logout-logo" />
+                        <img src="../images/logoutbtn.png" alt="logout" class="logout-logo" />
                     </a>
                 </div>
             </header>

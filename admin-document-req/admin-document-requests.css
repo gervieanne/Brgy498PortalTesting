@@ -122,7 +122,7 @@ body {
 
 .logout-logo {
   width: 45px;
-  border-radius: 50%;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,12 +130,13 @@ body {
   font-size: 24px;
   color: white;
   transition: 0.3s ease-in-out;
+  padding: 5px;
 }
 
 .logout-logo:hover {
   transform: scale(1.1);
   background-color: #c0c0c0;
-  border-radius: 50px;
+  border-radius: 8px;
 }
 
 .logout-logo img {

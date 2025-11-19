@@ -110,12 +110,13 @@ html {
 
 .logout-logo {
   width: 40px;
+  border-radius: 8px;
+  padding: 5px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .logout-logo:hover {
-  border-radius: 50px;
   background-color: #c0c0c0;
   transform: scale(1.2);
 }

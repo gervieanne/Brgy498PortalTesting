@@ -223,7 +223,7 @@ $result = $conn->query($sql);
         <div class="header-right">
           <div class="clock" id="clock">12:00:00 AM</div>
           <a href="#" id="logoutBtn">
-            <img src="../images/logout.png" alt="logout" class="logout-logo" />
+            <img src="../images/logoutbtn.png" alt="logout" class="logout-logo" />
           </a>
         </div>
       </div>
@@ -341,8 +341,16 @@ $result = $conn->query($sql);
         </div>
 
         <div class="pagination">
-          <div class="pagination-info">
-            Showing 0 entries
+          <div class="pagination-info" id="paginationInfo">
+            <?php 
+            $totalRows = $result ? $result->num_rows : 0;
+            $showing = min(10, $totalRows);
+            if ($totalRows > 0) {
+              echo "Showing 1 to {$showing} of {$totalRows} entries";
+            } else {
+              echo "Showing 0 entries";
+            }
+            ?>
           </div>
           <div class="pagination-buttons">
             <button id="prevBtn" disabled>Previous</button>

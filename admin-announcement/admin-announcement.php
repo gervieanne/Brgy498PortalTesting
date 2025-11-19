@@ -343,7 +343,7 @@ $announcements_result = $conn->query($announcements_sql);
       <div class="header">
         <div class="clock" id="clock">12:00:00 AM</div>
         <a href="../landingpage/index.php" class="logout-logo" id="logoutBtn">
-          <img src="../images/logout.png" alt="logout" class="logout-logo" />
+          <img src="../images/logoutbtn.png" alt="logout" class="logout-logo" />
         </a>
       </div>
 
@@ -413,6 +413,26 @@ $announcements_result = $conn->query($announcements_sql);
                   />
                 </button>
               </div>
+            </div>
+          </div>
+
+          <!-- Image Preview Container -->
+          <div class="form-group full-width" id="imagePreviewContainer" style="display: none;">
+            <label>Selected Image Preview</label>
+            <div class="media-preview-wrapper">
+              <img id="selectedImagePreview" src="" alt="Selected Image Preview" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid #ddd;">
+              <button type="button" class="remove-preview-btn" onclick="removeImagePreview()">Remove Image</button>
+            </div>
+          </div>
+
+          <!-- Video Preview Container -->
+          <div class="form-group full-width" id="videoPreviewContainer" style="display: none;">
+            <label>Selected Video Preview</label>
+            <div class="media-preview-wrapper">
+              <video id="selectedVideoPreview" controls style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid #ddd;">
+                <source src="" type="video/mp4">
+              </video>
+              <button type="button" class="remove-preview-btn" onclick="removeVideoPreview()">Remove Video</button>
             </div>
           </div>
 
@@ -565,6 +585,13 @@ $announcements_result = $conn->query($announcements_sql);
               <img id="currentImagePreview" src="" alt="Current Image" style="max-width: 100%; border-radius: 6px;">
               <span id="removeImage" class="remove-media-btn">🗑️ Remove Image</span>
             </div>
+
+            <!-- New Image Preview Container -->
+            <div id="newImagePreviewContainer" class="media-preview-wrapper" style="display: none; margin-top: 10px;">
+              <label style="font-size: 14px; color: #666; margin-bottom: 8px; display: block;">New Image Preview</label>
+              <img id="newImagePreview" src="" alt="New Image Preview" style="max-width: 100%; max-height: 300px; border-radius: 6px; border: 2px solid #ddd;">
+              <button type="button" class="remove-preview-btn" onclick="removeNewImagePreview()" style="margin-top: 8px;">Remove New Image</button>
+            </div>
           </div>
 
           <div class="form-group">
@@ -576,6 +603,15 @@ $announcements_result = $conn->query($announcements_sql);
                 <source src="" type="video/mp4">
               </video>
               <span id="removeVideo" class="remove-media-btn">🗑️ Remove Video</span>
+            </div>
+
+            <!-- New Video Preview Container -->
+            <div id="newVideoPreviewContainer" class="media-preview-wrapper" style="display: none; margin-top: 10px;">
+              <label style="font-size: 14px; color: #666; margin-bottom: 8px; display: block;">New Video Preview</label>
+              <video id="newVideoPreview" controls style="max-width: 100%; max-height: 300px; border-radius: 6px; border: 2px solid #ddd;">
+                <source src="" type="video/mp4">
+              </video>
+              <button type="button" class="remove-preview-btn" onclick="removeNewVideoPreview()" style="margin-top: 8px;">Remove New Video</button>
             </div>
           </div>
 
@@ -804,6 +840,14 @@ $announcements_result = $conn->query($announcements_sql);
       document.getElementById("imageInput").addEventListener("change", async (e) => {
         const file = e.target.files[0];
         if (file) {
+          // Show preview immediately
+          const previewUrl = URL.createObjectURL(file);
+          document.getElementById('selectedImagePreview').src = previewUrl;
+          document.getElementById('imagePreviewContainer').style.display = 'block';
+          
+          // Scroll to preview
+          document.getElementById('imagePreviewContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
           const formData = new FormData();
           formData.append('file', file);
           formData.append('upload_temp_file', '1');
@@ -817,13 +861,17 @@ $announcements_result = $conn->query($announcements_sql);
             
             if (result.success) {
               tempImagePath = result.path;
-              imagePreviewUrl = URL.createObjectURL(file);
+              imagePreviewUrl = previewUrl;
               showPopupMessage("Image uploaded successfully!\n" + file.name, 'success');
             } else {
               showPopupMessage("Failed to upload image", 'error');
+              // Remove preview on failure
+              removeImagePreview();
             }
           } catch (error) {
             showPopupMessage("Error uploading image", 'error');
+            // Remove preview on error
+            removeImagePreview();
           }
         }
       });
@@ -832,6 +880,16 @@ $announcements_result = $conn->query($announcements_sql);
       document.getElementById("videoInput").addEventListener("change", async (e) => {
         const file = e.target.files[0];
         if (file) {
+          // Show preview immediately
+          const previewUrl = URL.createObjectURL(file);
+          const videoPreview = document.getElementById('selectedVideoPreview');
+          videoPreview.querySelector('source').src = previewUrl;
+          videoPreview.load();
+          document.getElementById('videoPreviewContainer').style.display = 'block';
+          
+          // Scroll to preview
+          document.getElementById('videoPreviewContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
           const formData = new FormData();
           formData.append('file', file);
           formData.append('upload_temp_file', '1');
@@ -845,16 +903,46 @@ $announcements_result = $conn->query($announcements_sql);
             
             if (result.success) {
               tempVideoPath = result.path;
-              videoPreviewUrl = URL.createObjectURL(file);
+              videoPreviewUrl = previewUrl;
               showPopupMessage("Video uploaded successfully!\n" + file.name, 'success');
             } else {
               showPopupMessage("Failed to upload video", 'error');
+              // Remove preview on failure
+              removeVideoPreview();
             }
           } catch (error) {
             showPopupMessage("Error uploading video", 'error');
+            // Remove preview on error
+            removeVideoPreview();
           }
         }
       });
+
+      // Remove image preview
+      function removeImagePreview() {
+        document.getElementById('imagePreviewContainer').style.display = 'none';
+        document.getElementById('selectedImagePreview').src = '';
+        document.getElementById('imageInput').value = '';
+        tempImagePath = null;
+        if (imagePreviewUrl) {
+          URL.revokeObjectURL(imagePreviewUrl);
+          imagePreviewUrl = null;
+        }
+      }
+
+      // Remove video preview
+      function removeVideoPreview() {
+        document.getElementById('videoPreviewContainer').style.display = 'none';
+        const videoPreview = document.getElementById('selectedVideoPreview');
+        videoPreview.querySelector('source').src = '';
+        videoPreview.load();
+        document.getElementById('videoInput').value = '';
+        tempVideoPath = null;
+        if (videoPreviewUrl) {
+          URL.revokeObjectURL(videoPreviewUrl);
+          videoPreviewUrl = null;
+        }
+      }
 
       // Show preview modal
       function showPreview() {
@@ -1026,10 +1114,69 @@ $announcements_result = $conn->query($announcements_sql);
 
         // Show modal
         document.getElementById('editModal').style.display = 'block';
+
+        // Add event listeners for new file previews in edit modal
+        setupEditFilePreviews();
       }
 
       function closeEditModal() {
         document.getElementById('editModal').style.display = 'none';
+        // Reset new preview containers
+        document.getElementById('newImagePreviewContainer').style.display = 'none';
+        document.getElementById('newVideoPreviewContainer').style.display = 'none';
+        document.getElementById('editImageInput').value = '';
+        document.getElementById('editVideoInput').value = '';
+      }
+
+      // Setup preview for new files in edit modal
+      function setupEditFilePreviews() {
+        const editImageInput = document.getElementById('editImageInput');
+        const editVideoInput = document.getElementById('editVideoInput');
+
+        // Remove existing listeners by cloning
+        const newEditImageInput = editImageInput.cloneNode(true);
+        editImageInput.parentNode.replaceChild(newEditImageInput, editImageInput);
+
+        const newEditVideoInput = editVideoInput.cloneNode(true);
+        editVideoInput.parentNode.replaceChild(newEditVideoInput, editVideoInput);
+
+        // Add new image preview handler
+        newEditImageInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            document.getElementById('newImagePreview').src = previewUrl;
+            document.getElementById('newImagePreviewContainer').style.display = 'block';
+          }
+        });
+
+        // Add new video preview handler
+        newEditVideoInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            const videoPreview = document.getElementById('newVideoPreview');
+            videoPreview.querySelector('source').src = previewUrl;
+            videoPreview.load();
+            document.getElementById('newVideoPreviewContainer').style.display = 'block';
+          }
+        });
+      }
+
+      // Remove new image preview in edit modal
+      function removeNewImagePreview() {
+        document.getElementById('newImagePreviewContainer').style.display = 'none';
+        document.getElementById('newImagePreview').src = '';
+        document.getElementById('editImageInput').value = '';
+      }
+
+      // Remove new video preview in edit modal
+      function removeNewVideoPreview() {
+        document.getElementById('newVideoPreviewContainer').style.display = 'none';
+        const videoPreview = document.getElementById('newVideoPreview');
+        videoPreview.querySelector('source').src = '';
+        videoPreview.load();
+        document.getElementById('editVideoInput').value = '';
       }
 
       // Delete Announcement

@@ -134,7 +134,8 @@ body {
 .logout-logo {
   width: 45px;
   height: 45px;
-  border-radius: 50%;
+  border-radius: 8px;
+  padding: 5px;
   transition: 0.3s ease-in-out;
   cursor: pointer;
 }

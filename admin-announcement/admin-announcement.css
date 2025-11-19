@@ -96,17 +96,19 @@ body {
 
 .logout-logo {
   width: 50px;
-  border-radius: 50%;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: 0.3s;
+  padding: 5px;
 }
 
 .logout-logo:hover {
   background-color: #c0c0c0;
   transform: scale(1.1);
+  border-radius: 8px;
 }
 
 .content-box {
@@ -1213,4 +1215,52 @@ body.modal-open {
 .remove-media-btn:hover {
   background: rgba(192, 57, 43, 1);
   opacity: 0.9;
+}
+
+/* Media Preview Wrapper Styles */
+.media-preview-wrapper {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.media-preview-wrapper label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  display: block;
+  font-weight: 500;
+}
+
+.media-preview-wrapper img,
+.media-preview-wrapper video {
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-preview-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 16px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.remove-preview-btn:hover {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.remove-preview-btn:active {
+  transform: translateY(0);
 }

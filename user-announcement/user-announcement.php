@@ -27,11 +27,13 @@ if ($conn->connect_error) {
 // Set charset to handle special characters properly
 $conn->set_charset("utf8mb4");
 
-// Fetch announcements - only show announcements that are scheduled for now or in the past
+// Fetch announcements - show announcements that are scheduled for now/past OR were created recently
 // Send to 'all' or 'residents', ordered by scheduled_date (most recent first)
+// Added 1 minute buffer and 1 hour window for recently created announcements to show immediately
 $sql = "SELECT * FROM announcements 
         WHERE send_to IN ('all', 'residents') 
-        AND scheduled_date <= NOW() 
+        AND (scheduled_date <= DATE_ADD(NOW(), INTERVAL 1 MINUTE) 
+             OR created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR))
         ORDER BY scheduled_date DESC, created_at DESC";
 $result = $conn->query($sql);
 ?>
@@ -82,7 +84,7 @@ $result = $conn->query($sql);
             <span id="time"></span>
             <a href="#" id="logoutBtn">
               <img
-                src="../images/logout.png"
+                src="../images/logoutbtn.png"
                 alt="logout"
                 class="logout-logo"
               />

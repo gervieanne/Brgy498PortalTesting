@@ -160,7 +160,7 @@ $resident_id = 'BRG-498-' . str_pad($user_id, 5, '0', STR_PAD_LEFT);
                 <div class="topbar-right">
                     <div id="clock" class="clock">00:00:00 AM</div>
                     <a href="#" id="logoutBtn">
-                        <img src="../images/logout.png" alt="logout" class="logout-logo" id="logoutBtn"/>
+                        <img src="../images/logoutbtn.png" alt="logout" class="logout-logo" id="logoutBtn"/>
                     </a>
                 </div>
             </header>

@@ -99,7 +99,7 @@ if (isset($_GET['get_events'])) {
         <div class="header-right">
           <div class="clock" id="clock">12:00:00 AM</div>
           <a href="#" id="logoutBtn">
-            <img src="../images/logout.png" alt="logout" class="logout-logo" id="logoutBtn"/>
+            <img src="../images/logoutbtn.png" alt="logout" class="logout-logo" id="logoutBtn"/>
           </a>
         </div>
       </div>

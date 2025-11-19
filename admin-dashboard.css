@@ -116,10 +116,13 @@ body {
   width: 40px;
   cursor: pointer;
   transition: 0.3s;
+  padding: 5px;
+  border-radius: 8px;
+  display: block;
 }
 
 .logout-logo:hover {
-  border-radius: 50px;
+  border-radius: 8px;
   background-color: #c0c0c0;
   transform: scale(1.2);
 }
