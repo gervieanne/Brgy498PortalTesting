@@ -771,162 +771,140 @@ html.modal-open {
 
 .status-modal-content, .delete-modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: auto;
     padding: 40px;
     border-radius: 15px;
     text-align: center;
     width: 90%;
     max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     animation: slideDown 0.3s ease;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.status-modal-icon, .delete-modal-icon {
-    font-size: 60px;
-    margin-bottom: 20px;
-    animation: shake 0.5s ease;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-
-.status-modal-content h2 {
-  color: #31b55f;
-  font-size: 24px;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
-
-.delete-modal-content h2 {
-  color: #dc3545;
-  font-size: 24px;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
-
-.status-modal-content p, .delete-modal-content p {
-  color: #666;
-  font-size: 16px;
-  margin-bottom: 30px;
-}
-
-.status-modal-buttons, .delete-modal-buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.status-btn-cancel,
-.status-btn-confirm, .delete-btn-cancel, .delete-btn-confirm {
-  padding: 12px 30px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: "Poppins", sans-serif;
-}
-
-.status-btn-cancel, .delete-btn-cancel {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.status-btn-cancel:hover, .delete-btn-cancel:hover {
-  background-color: #d0d0d0;
-  transform: translateY(-2px);
-}
-
-.status-btn-confirm {
-  background-color: #31b55f;
-  color: white;
-}
-
-.delete-btn-confirm {
-  background-color: #dc3545;
-  color: white;
-}
-
-.status-btn-confirm:hover {
-  background-color: #2a9e52;
-  transform: translateY(-2px);
-}
-
-.delete-btn-confirm:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+/* Responsive Button Styles */
+@media (max-width: 1024px) {
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 6px;
   }
-  to {
-    opacity: 1;
+
+  .btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .pagination-buttons button {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 }
 
-@keyframes slideDown {
-  from {
-    transform: translateY(-50px);
-    opacity: 0;
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+
+  .btn {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12px;
   }
-}
 
+  .pagination {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .status-modal-content {
+  .pagination-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-buttons button {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 40px;
+  }
+
+  .status-modal-content, .delete-modal-content {
     padding: 30px 20px;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .pagination {
+    padding: 15px;
+  }
+
+  .pagination-info {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .pagination-buttons {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .pagination-buttons button {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-width: 35px;
+  }
+
+  .status-modal-content, .delete-modal-content {
+    padding: 25px 20px;
     max-width: 320px;
+    max-height: 85vh;
   }
 
-  .status-modal-icon {
+  .status-modal-icon, .delete-modal-icon {
     font-size: 50px;
+    margin-bottom: 15px;
   }
 
-  .status-modal-content h2 {
+  .status-modal-content h2, .delete-modal-content h2 {
     font-size: 20px;
+    margin-bottom: 10px;
   }
 
-  .status-modal-content p {
+  .status-modal-content p, .delete-modal-content p {
     font-size: 14px;
+    margin-bottom: 20px;
   }
 
-  .status-modal-buttons {
+  .status-modal-buttons, .delete-modal-buttons {
     flex-direction: column;
     gap: 10px;
+    margin-top: auto;
   }
 
   .status-btn-cancel,
-  .status-btn-confirm {
+  .status-btn-confirm,
+  .delete-btn-cancel,
+  .delete-btn-confirm {
     width: 100%;
     padding: 12px 20px;
+    font-size: 14px;
   }
 }
+

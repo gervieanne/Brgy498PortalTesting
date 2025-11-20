@@ -1027,6 +1027,16 @@ body {
     top: 36px;
     font-size: 16px;
   }
+   .form-buttons {
+    text-align: center;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 339px) {
@@ -1034,5 +1044,10 @@ body {
     width: 300px !important;
     max-width: 300px !important;
     min-width: 0 !important;
+  }
+    .submit-btn,
+  .cancel-btn {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }

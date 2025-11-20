@@ -768,6 +768,65 @@ body {
       left: 85%;
       font-size: 1.7em;
     }
+
+    .view-selector {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 15px;
+    }
+
+    .view-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      flex: 1;
+      min-width: 60px;
+    }
+
+    .calendar-nav button {
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+    }
+
+    .btn-cancel,
+    .btn-submit {
+      padding: 8px 14px;
+      font-size: 12px;
+    }
+
+    .delete-modal-content {
+      padding: 25px 20px;
+      max-width: 320px;
+      max-height: 85vh;
+    }
+
+    .delete-modal-icon {
+       font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .delete-modal-content h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .delete-modal-content p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .delete-modal-buttons {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .delete-btn-cancel,
+    .delete-btn-confirm {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 14px;
+    }
   }
 }
 
@@ -846,16 +905,21 @@ body {
 
 .delete-modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: auto;
     padding: 40px;
     border-radius: 15px;
     text-align: center;
     width: 90%;
     max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     animation: slideDown 0.3s ease;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
 
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -1253,6 +1317,11 @@ body {
   
   .year-month-name {
     font-size: 14px;
+  }
+    .btn-cancel,
+  .btn-submit {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 

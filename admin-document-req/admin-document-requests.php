@@ -62,10 +62,10 @@ if (isset($_GET['view_request'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
     
-    if ($_POST['action'] === 'update_status') {
+        if ($_POST['action'] === 'update_status') {
         $request_id = intval($_POST['request_id']);
         $new_status = $_POST['new_status'];
-        $rejection_reason = isset($_POST['rejection_reason']) ? $_POST['rejection_reason'] : null;
+        $rejection_reason = isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : null;
         
         if ($new_status === 'rejected' && $rejection_reason) {
             $stmt = $conn->prepare("UPDATE document_requests SET status = ?, rejection_reason = ? WHERE request_id = ?");

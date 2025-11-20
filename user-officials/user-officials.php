@@ -68,7 +68,6 @@ $result = $conn->query($sql);
             <li><a href="../user-dashboard/user-dashboard.php">Dashboard</a></li>
             <li><a href="../user-profile/user-profile.php">Profile</a></li>
             <li><a href="../user-request/user_request.php">Document Requests</a></li>
-            <li><a href="../user-announcement/user-announcement.php">Announcement</a></li>
             <li><a href="../user-calendar/user-calendar.php">Calendar</a></li>
             <li><a href="../user-officials/user-officials.php" class="officials-link">Officials</a></li>
           </ul>

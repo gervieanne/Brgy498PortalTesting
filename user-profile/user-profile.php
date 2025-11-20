@@ -143,7 +143,6 @@ $resident_id = 'BRG-498-' . str_pad($user_id, 5, '0', STR_PAD_LEFT);
                     <li><a href="../user-dashboard/user-dashboard.php">Dashboard</a></li>
                     <li class="active"><a href="../user-profile/user-profile.php">Profile</a></li>
                     <li><a href="../user-request/user_request.php">Document Requests</a></li>
-                    <li><a href="../user-announcement/user-announcement.php">Announcement</a></li>
                     <li><a href="../user-calendar/user-calendar.php">Calendar</a></li>
                     <li><a href="../user-officials/user-officials.php">Officials</a></li>
                 </ul>

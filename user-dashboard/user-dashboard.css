@@ -1,3 +1,5 @@
+/*dashboard.css - Enhanced with Announcement Modal*/
+
 * {
   margin: 0;
   padding: 0;
@@ -388,6 +390,7 @@ body {
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
 }
 
 .announcement-card.active {
@@ -397,6 +400,8 @@ body {
 
 .announcement-card:hover {
   background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .announcement-card h4 {
@@ -423,6 +428,10 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .announcement-card .details {
@@ -454,6 +463,25 @@ body {
 .announcement-card .details span:last-child::before {
   content: "Time:";
   font-weight: bold;
+}
+
+/* Click to view indicator */
+.announcement-card::after {
+  content: "Click to view full announcement";
+  position: absolute;
+  left: 50%;
+  bottom: 15px;
+  transform: translateX(-50%);
+  font-size: 22px;
+  color: #21205d;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* so it doesn't block clicking */
+}
+
+.announcement-card:hover::after {
+  opacity: 0.85;
 }
 
 /* Navigation Arrows */
@@ -526,6 +554,198 @@ body {
 
 .bullet:hover {
   background-color: #4a5fd9;
+}
+
+/* Announcement Modal */
+.announcement-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.announcement-modal.active {
+  display: flex;
+}
+
+.announcement-modal-media img,
+.announcement-modal-media video {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.announcement-modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.announcement-modal-header {
+  background: #21205d;
+  color: white;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px 12px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.announcement-modal-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.announcement-modal-header h3::before {
+  content: "📢";
+  font-size: 24px;
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.close-modal-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.announcement-modal-body {
+  padding: 30px;
+}
+
+.announcement-modal-body p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.announcement-modal-body p a {
+  color: #21205d;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.announcement-modal-body p a:hover {
+  color: #2c2b85;
+}
+
+.announcement-modal-media {
+  margin: 20px 0;
+}
+
+.announcement-modal-media img,
+.announcement-modal-media video {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 12px 12px;
+  gap: 15px;
+}
+
+.announcement-modal-details {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #666;
+}
+
+.announcement-modal-details span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.announcement-modal-details span strong {
+  color: #21205d;
+  font-weight: 600;
+}
+
+.modal-close-bottom-btn {
+  background: #21205d;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-close-bottom-btn:hover {
+  background: #2c2b85;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 32, 93, 0.3);
 }
 
 /* Pending Requests Section */
@@ -742,7 +962,248 @@ body {
   }
 
   .content {
-    padding: 0 28px 28px 28px;
+    padding: 0 16px 16px 16px;
+  }
+
+  .section-header {
+    padding: 10px 14px;
+  }
+
+  .section-title {
+    font-size: 12px !important;
+  }
+
+  .request-content {
+    padding: 10px 14px;
+  }
+
+  .request-content h4 {
+    font-size: 13px;
+  }
+
+  .request-content > p {
+    font-size: 11px;
+  }
+
+  .request-meta {
+    font-size: 10px;
+  }
+
+  .announcements-list {
+    padding: 12px;
+    min-height: 240px;
+  }
+
+  .announcement-card {
+    padding: 14px;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+
+  .announcement-card h4 {
+    font-size: 14px;
+  }
+
+  .announcement-card p {
+    font-size: 12px;
+  }
+
+  .announcement-card .details {
+    font-size: 11px;
+  }
+
+  .announcement-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+
+  .announcement-nav.prev {
+    left: 8px;
+  }
+
+  .announcement-nav.next {
+    right: 8px;
+  }
+
+  .empty-state {
+    padding: 40px 14px;
+    font-size: 13px;
+    min-height: 180px;
+  }
+
+  .pickup-notice {
+    font-size: 10px;
+    padding: 8px;
+  }
+
+  .pickup-notice strong {
+    font-size: 11px;
+  }
+
+  .announcement-modal-header h3 {
+    font-size: 16px;
+  }
+
+  .close-modal-btn {
+    font-size: 28px;
+    width: 35px;
+    height: 35px;
+  }
+
+  .announcement-modal-body {
+    padding: 15px;
+  }
+
+  .announcement-modal-body p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 365px) {
+  .sidebar {
+    width: 300px;
+  }
+
+  .logo-section h2 {
+    font-size: 16px;
+  }
+
+  .barangay-logo {
+    width: 40%;
+  }
+
+  .nav-item {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .burger-menu {
+    top: 20px;
+    right: 5px;
+    font-size: 24px;
+  }
+
+  .header {
+    padding: 10px 12px 12px 12px;
+  }
+
+  .overview-header h2 {
+    font-size: 16px;
+  }
+
+  .welcome-text {
+    font-size: 10px;
+  }
+
+  .time-and-logo {
+    top: -50px;
+    left: 0px;
+    gap: 8px;
+  }
+
+  .time-and-logo p {
+    font-size: 11px;
+  }
+
+  .logout-logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .right-sub {
+    top: -40px;
+    right: 0px;
+    font-size: 9px;
+  }
+
+  .content {
+    padding: 0 12px 12px 12px;
+  }
+
+  .section-header {
+    padding: 10px 12px;
+  }
+
+  .section-title {
+    font-size: 11px !important;
+  }
+
+  .request-content {
+    padding: 10px 12px;
+  }
+
+  .request-content h4 {
+    font-size: 12px;
+  }
+
+  .request-content > p {
+    font-size: 10px;
+  }
+
+  .request-meta {
+    font-size: 9px;
+  }
+
+  .announcements-list {
+    padding: 10px;
+    min-height: 220px;
+  }
+
+  .announcement-card {
+    padding: 12px;
+    margin-left: 15px;
+  }
+
+  .announcement-card h4 {
+    font-size: 13px;
+  }
+
+  .announcement-card p {
+    font-size: 11px;
+  }
+
+  .announcement-card .details {
+    font-size: 10px;
+  }
+
+  .announcement-nav {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .announcement-nav.prev {
+    left: 6px;
+  }
+
+  .announcement-nav.next {
+    right: 6px;
+  }
+
+  .empty-state {
+    padding: 35px 12px;
+    font-size: 12px;
+    min-height: 160px;
+  }
+}
+
+@media (max-width: 340px) {
+  .time-and-logo {
+    top: 20px;
+    left: 10px;
+  }
+
+  .overview-header {
+    margin-top: 45px;
+  }
+
+  .header {
+    padding-bottom: 0px;
+  }
+}
+
+: 0 28px 28px 28px;
   }
 }
 
@@ -892,6 +1353,29 @@ body {
   .announcement-nav.next {
     right: 12px;
   }
+
+  .announcement-modal-content {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .announcement-modal-header {
+    padding: 15px 20px;
+  }
+
+  .announcement-modal-header h3 {
+    font-size: 18px;
+  }
+
+  .announcement-modal-body {
+    padding: 20px;
+  }
+
+  .announcement-modal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -952,225 +1436,6 @@ body {
   }
 
   .content {
-    padding: 0 16px 16px 16px;
-  }
-
-  .section-header {
-    padding: 10px 14px;
-  }
-
-  .section-title {
-    font-size: 12px !important;
-  }
-
-  .request-content {
-    padding: 10px 14px;
-  }
-
-  .request-content h4 {
-    font-size: 13px;
-  }
-
-  .request-content > p {
-    font-size: 11px;
-  }
-
-  .request-meta {
-    font-size: 10px;
-  }
-
-  .announcements-list {
-    padding: 12px;
-    min-height: 240px;
-  }
-
-  .announcement-card {
-    padding: 14px;
-    margin-left: 10px;
-    margin-top: 10px;
-  }
-
-  .announcement-card h4 {
-    font-size: 14px;
-  }
-
-  .announcement-card p {
-    font-size: 12px;
-  }
-
-  .announcement-card .details {
-    font-size: 11px;
-  }
-
-  .announcement-nav {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
-  }
-
-  .announcement-nav.prev {
-    left: 8px;
-  }
-
-  .announcement-nav.next {
-    right: 8px;
-  }
-
-  .empty-state {
-    padding: 40px 14px;
-    font-size: 13px;
-    min-height: 180px;
-  }
-
-  .pickup-notice {
-    font-size: 10px;
-    padding: 8px;
-  }
-
-  .pickup-notice strong {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 365px) {
-  .sidebar {
-    width: 300px;
-  }
-
-  .logo-section h2 {
-    font-size: 16px;
-  }
-
-  .barangay-logo {
-    width: 40%;
-  }
-
-  .nav-item {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-
-  .burger-menu {
-    top: 20px;
-    right: 5px;
-    font-size: 24px;
-  }
-
-  .header {
-    padding: 10px 12px 12px 12px;
-  }
-
-  .overview-header h2 {
-    font-size: 16px;
-  }
-
-  .welcome-text {
-    font-size: 10px;
-  }
-
-  .time-and-logo {
-    top: -50px;
-    left: 0px;
-    gap: 8px;
-  }
-
-  .time-and-logo p {
-    font-size: 11px;
-  }
-
-  .logout-logo {
-    width: 35px;
-    height: 35px;
-  }
-
-  .right-sub {
-    top: -40px;
-    right: 0px;
-    font-size: 9px;
-  }
-
-  .content {
-    padding: 0 12px 12px 12px;
-  }
-
-  .section-header {
-    padding: 10px 12px;
-  }
-
-  .section-title {
-    font-size: 11px !important;
-  }
-
-  .request-content {
-    padding: 10px 12px;
-  }
-
-  .request-content h4 {
-    font-size: 12px;
-  }
-
-  .request-content > p {
-    font-size: 10px;
-  }
-
-  .request-meta {
-    font-size: 9px;
-  }
-
-  .announcements-list {
-    padding: 10px;
-    min-height: 220px;
-  }
-
-  .announcement-card {
-    padding: 12px;
-    margin-left: 15px;
-  }
-
-  .announcement-card h4 {
-    font-size: 13px;
-  }
-
-  .announcement-card p {
-    font-size: 11px;
-  }
-
-  .announcement-card .details {
-    font-size: 10px;
-  }
-
-  .announcement-nav {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-  }
-
-  .announcement-nav.prev {
-    left: 6px;
-  }
-
-  .announcement-nav.next {
-    right: 6px;
-  }
-
-  .empty-state {
-    padding: 35px 12px;
-    font-size: 12px;
-    min-height: 160px;
-  }
-}
-
-@media (max-width: 340px) {
-  .time-and-logo {
-    top: 20px;
-    left: 10px;
-  }
-
-  .overview-header {
-    margin-top: 45px;
-  }
-
-  .header {
-    padding-bottom: 0px;
+    padding: ;
   }
 }

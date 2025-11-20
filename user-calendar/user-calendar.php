@@ -24,10 +24,17 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch all events
+// Fetch only upcoming events (today and future)
 if (isset($_GET['get_events'])) {
-    $sql = "SELECT event_id, title, description, event_date, start_time, end_time FROM calendar_events ORDER BY event_date ASC";
-    $result = $conn->query($sql);
+    $today = date('Y-m-d');
+    $sql = "SELECT event_id, title, description, event_date, start_time, end_time 
+            FROM calendar_events 
+            WHERE event_date >= ? 
+            ORDER BY event_date ASC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $today);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     $events = array();
     while($row = $result->fetch_assoc()) {
@@ -42,6 +49,7 @@ if (isset($_GET['get_events'])) {
     }
     
     echo json_encode($events);
+    $stmt->close();
     exit();
 }
 ?>
@@ -83,7 +91,6 @@ if (isset($_GET['get_events'])) {
           <li><a href="../user-dashboard/user-dashboard.php">Dashboard</a></li>
           <li><a href="../user-profile/user-profile.php">Profile</a></li>
           <li><a href="../user-request/user_request.php">Document Requests</a></li>
-          <li><a href="../user-announcement/user-announcement.php">Announcement</a></li>
           <li><a href="../user-calendar/user-calendar.php" class="active">Calendar</a></li>
           <li><a href="../user-officials/user-officials.php">Officials</a></li>
         </ul>
@@ -114,17 +121,44 @@ if (isset($_GET['get_events'])) {
               <button id="nextMonth">></button>
             </div>
           </div>
-          <div class="calendar-grid">
-            <div class="calendar-days">
-              <div class="day-header">Sunday</div>
-              <div class="day-header">Monday</div>
-              <div class="day-header">Tuesday</div>
-              <div class="day-header">Wednesday</div>
-              <div class="day-header">Thursday</div>
-              <div class="day-header">Friday</div>
-              <div class="day-header">Saturday</div>
+          
+          <!-- View Selector -->
+          <div class="view-selector">
+            <button class="view-btn active" data-view="month">Month</button>
+            <button class="view-btn" data-view="week">Week</button>
+            <button class="view-btn" data-view="day">Day</button>
+            <button class="view-btn" data-view="year">Year</button>
+          </div>
+          
+          <!-- Month View -->
+          <div class="calendar-view" id="monthView">
+            <div class="calendar-grid">
+              <div class="calendar-days">
+                <div class="day-header">Sunday</div>
+                <div class="day-header">Monday</div>
+                <div class="day-header">Tuesday</div>
+                <div class="day-header">Wednesday</div>
+                <div class="day-header">Thursday</div>
+                <div class="day-header">Friday</div>
+                <div class="day-header">Saturday</div>
+              </div>
+              <div class="calendar-dates" id="calendarDates"></div>
             </div>
-            <div class="calendar-dates" id="calendarDates"></div>
+          </div>
+          
+          <!-- Week View -->
+          <div class="calendar-view" id="weekView" style="display: none;">
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
+          
+          <!-- Day View -->
+          <div class="calendar-view" id="dayView" style="display: none;">
+            <div class="day-grid" id="dayGrid"></div>
+          </div>
+          
+          <!-- Year View -->
+          <div class="calendar-view" id="yearView" style="display: none;">
+            <div class="year-grid" id="yearGrid"></div>
           </div>
         </div>
 
@@ -197,6 +231,8 @@ if (isset($_GET['get_events'])) {
       // Events storage
       let events = [];
       let selectedDate = null;
+      let currentDate = new Date();
+      let currentView = 'month'; // Default view
 
       // Clock
       function updateClock() {
@@ -233,7 +269,7 @@ if (isset($_GET['get_events'])) {
           .then(data => {
             events = data;
             renderEvents();
-            renderCalendar();
+            renderCurrentView();
           });
       }
 
@@ -291,7 +327,6 @@ if (isset($_GET['get_events'])) {
           .map(
           (event) => `
             <div class="event-item" onclick="previewAnnouncement(${event.id})">
-
               <div class="event-date">${formatDate(event.date)}</div>
               <div class="event-title">${event.title}</div>
               <div class="event-time">(${formatTime(event.startTime)} - ${formatTime(event.endTime)})</div>
@@ -301,18 +336,94 @@ if (isset($_GET['get_events'])) {
       .join("");
   }
 
-      // Calendar functionality
-      let currentDate = new Date();
-
-      function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
+      // View selector functionality
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const view = this.getAttribute('data-view');
+          switchView(view);
+        });
+      });
+      
+      function switchView(view) {
+        currentView = view;
+        
+        // Update active button
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-view') === view) {
+            btn.classList.add('active');
+          }
+        });
+        
+        // Hide all views
+        document.querySelectorAll('.calendar-view').forEach(v => {
+          v.style.display = 'none';
+        });
+        
+        // Show selected view
+        document.getElementById(view + 'View').style.display = 'block';
+        
+        // Update header and render
+        renderCurrentView();
+      }
+      
+      // Render based on current view
+      function renderCurrentView() {
+        switch(currentView) {
+          case 'day':
+            renderDayView();
+            break;
+          case 'week':
+            renderWeekView();
+            break;
+          case 'month':
+            renderMonthView();
+            break;
+          case 'year':
+            renderYearView();
+            break;
+        }
+      }
+      
+      // Update header based on current view
+      function updateHeader() {
         const monthNames = [
           "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December",
         ];
-        document.getElementById("monthYear").textContent = `${monthNames[month]} ${year}`;
+        
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        
+        switch(currentView) {
+          case 'day':
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[month]} ${day}, ${year}`;
+            break;
+          case 'week':
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[weekStart.getMonth()]} ${weekStart.getDate()} - ${monthNames[weekEnd.getMonth()]} ${weekEnd.getDate()}, ${year}`;
+            break;
+          case 'month':
+            document.getElementById("monthYear").textContent = 
+              `${monthNames[month]} ${year}`;
+            break;
+          case 'year':
+            document.getElementById("monthYear").textContent = `${year}`;
+            break;
+        }
+      }
+
+      // Month View - FIXED to only show dots on dates with events
+      function renderMonthView() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        updateHeader();
 
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -321,18 +432,23 @@ if (isset($_GET['get_events'])) {
         const calendarDates = document.getElementById("calendarDates");
         calendarDates.innerHTML = "";
 
+        // Previous month's trailing days
         for (let i = firstDay - 1; i >= 0; i--) {
           const dateDiv = document.createElement("div");
           dateDiv.className = "calendar-date other-month";
           dateDiv.textContent = daysInPrevMonth - i;
           calendarDates.appendChild(dateDiv);
-        };
+        }
 
+        // Current month's days
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
         for (let day = 1; day <= daysInMonth; day++) {
           const dateDiv = document.createElement("div");
           dateDiv.className = "calendar-date";
 
+          // Check if today
           if (
             year === today.getFullYear() &&
             month === today.getMonth() &&
@@ -341,19 +457,26 @@ if (isset($_GET['get_events'])) {
             dateDiv.classList.add("today");
           }
 
+          // Create date string for comparison
           const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const dateObj = new Date(dateString + "T00:00:00");
+          
+          // FIXED: Only show dot if date has events AND is today or in the future
           const hasEvent = events.some((event) => event.date === dateString);
-          if (hasEvent) {
+          const isFutureOrToday = dateObj >= today;
+
+          if (hasEvent && isFutureOrToday) {
             dateDiv.classList.add("has-event");
             dateDiv.style.cursor = "pointer";
             dateDiv.onclick = () => filterEventsByDate(dateString);
-            dateDiv.title = "Click to view events on this date"; // to
+            dateDiv.title = "Click to view events on this date";
           }
 
           dateDiv.textContent = day;
           calendarDates.appendChild(dateDiv);
         }
 
+        // Next month's leading days
         const totalCells = calendarDates.children.length;
         const remainingCells = 42 - totalCells;
         for (let day = 1; day <= remainingCells; day++) {
@@ -363,23 +486,168 @@ if (isset($_GET['get_events'])) {
           calendarDates.appendChild(dateDiv);
         }
       }
+      
+      // Day View
+      function renderDayView() {
+        updateHeader();
+        const dayGrid = document.getElementById('dayGrid');
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        
+        const dayEvents = events.filter(e => e.date === dateString);
+        const today = new Date();
+        const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+        
+        let html = `<div class="day-view-header ${isToday ? 'today' : ''}">`;
+        html += `<h3>${formatDate(dateString)}</h3>`;
+        html += `<p>${dayEvents.length} event(s) scheduled</p>`;
+        html += `</div>`;
+        
+        html += `<div class="day-events">`;
+        if (dayEvents.length > 0) {
+          dayEvents.forEach(event => {
+            html += `<div class="day-event-item" onclick="previewAnnouncement(${event.id})">`;
+            html += `<div class="event-time">${formatTime(event.startTime)} - ${formatTime(event.endTime)}</div>`;
+            html += `<div class="event-title">${event.title}</div>`;
+            html += `</div>`;
+          });
+        } else {
+          html += `<div class="no-events-day">No events scheduled for this day</div>`;
+        }
+        html += `</div>`;
+        
+        dayGrid.innerHTML = html;
+      }
+      
+      // Week View
+      function renderWeekView() {
+        updateHeader();
+        const weekGrid = document.getElementById('weekGrid');
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+        
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let html = '<div class="week-days-header">';
+        dayNames.forEach(day => {
+          html += `<div class="week-day-header">${day}</div>`;
+        });
+        html += '</div>';
+        
+        html += '<div class="week-days-content">';
+        for (let i = 0; i < 7; i++) {
+          const currentDay = new Date(weekStart);
+          currentDay.setDate(weekStart.getDate() + i);
+          const year = currentDay.getFullYear();
+          const month = currentDay.getMonth();
+          const day = currentDay.getDate();
+          const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          
+          const dayEvents = events.filter(e => e.date === dateString);
+          const today = new Date();
+          const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+          
+          html += `<div class="week-day-cell ${isToday ? 'today' : ''}">`;
+          html += `<div class="week-day-number">${day}</div>`;
+          if (dayEvents.length > 0) {
+            dayEvents.slice(0, 3).forEach(event => {
+              html += `<div class="week-event-item" onclick="previewAnnouncement(${event.id})" title="${event.title}">`;
+              html += `<span class="event-time-small">${formatTime(event.startTime)}</span> ${event.title}`;
+              html += `</div>`;
+            });
+            if (dayEvents.length > 3) {
+              html += `<div class="more-events">+${dayEvents.length - 3} more</div>`;
+            }
+          }
+          html += `</div>`;
+        }
+        html += '</div>';
+        
+        weekGrid.innerHTML = html;
+      }
+      
+      // Year View
+      function renderYearView() {
+        updateHeader();
+        const yearGrid = document.getElementById('yearGrid');
+        const year = currentDate.getFullYear();
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December",
+        ];
+        
+        let html = '';
+        for (let m = 0; m < 12; m++) {
+          const monthEvents = events.filter(e => {
+            const eventDate = new Date(e.date);
+            return eventDate.getFullYear() === year && eventDate.getMonth() === m;
+          });
+          
+          html += `<div class="year-month-cell" onclick="switchToMonth(${m})">`;
+          html += `<div class="year-month-name">${monthNames[m]}</div>`;
+          html += `<div class="year-month-events">${monthEvents.length} event(s)</div>`;
+          html += `</div>`;
+        }
+        
+        yearGrid.innerHTML = html;
+      }
+      
+      function switchToMonth(monthIndex) {
+        currentDate.setMonth(monthIndex);
+        currentDate.setDate(1);
+        switchView('month');
+      }
 
+      // Navigation buttons
       document.getElementById("prevMonth").addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        navigateView('prev');
       });
 
       document.getElementById("nextMonth").addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+        navigateView('next');
       });
+      
+      function navigateView(direction) {
+        switch(currentView) {
+          case 'day':
+            if (direction === 'prev') {
+              currentDate.setDate(currentDate.getDate() - 1);
+            } else {
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+            break;
+          case 'week':
+            if (direction === 'prev') {
+              currentDate.setDate(currentDate.getDate() - 7);
+            } else {
+              currentDate.setDate(currentDate.getDate() + 7);
+            }
+            break;
+          case 'month':
+            if (direction === 'prev') {
+              currentDate.setMonth(currentDate.getMonth() - 1);
+            } else {
+              currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+            break;
+          case 'year':
+            if (direction === 'prev') {
+              currentDate.setFullYear(currentDate.getFullYear() - 1);
+            } else {
+              currentDate.setFullYear(currentDate.getFullYear() + 1);
+            }
+            break;
+        }
+        renderCurrentView();
+      }
 
        // filter events by specific date
       function filterEventsByDate(date){
         selectedDate = date;
 
-        document.querySelectorAll('.calendar-date').forEach(date => {
-          date.classList.remove('selected-date');
+        document.querySelectorAll('.calendar-date').forEach(dateEl => {
+          dateEl.classList.remove('selected-date');
         });
 
         event.target.classList.add('selected-date');
@@ -392,29 +660,20 @@ if (isset($_GET['get_events'])) {
       function clearDateFilter() {
         selectedDate = null;
 
-        document.querySelectorAll('.calendar-date').forEach(date => {
-          date.classList.remove('selected-date');
+        document.querySelectorAll('.calendar-date').forEach(dateEl => {
+          dateEl.classList.remove('selected-date');
         });
         
         renderEvents();
       }
 
-      // Initial load
-      loadEvents();
-
       function previewAnnouncement(eventId) {
-      console.log("Looking for event ID:", eventId);
-      console.log("Available events:", events);
-      
       const event = events.find(e => e.id == eventId); 
       if (!event) {
         console.warn("Event not found:", eventId);
-        console.log("Events array:", events);
         alert("Event not found. Events might still be loading.");
         return;
       }
-
-      console.log("Event found:", event);
       
       document.getElementById("previewTitle").textContent = event.title;
       document.getElementById("previewDate").textContent = formatDate(event.date);
@@ -436,17 +695,27 @@ if (isset($_GET['get_events'])) {
     function closePreviewModal() {
       document.getElementById("eventPreviewModal").classList.remove("show");
     }
-// Close modal function
-function closePreviewModal() {
-  document.getElementById("eventPreviewModal").classList.remove("show");
-}
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const previewModal = document.getElementById("eventPreviewModal");
+      if (event.target === previewModal) {
+        closePreviewModal();
+      }
+    }
 
 // Make functions globally accessible
 window.previewAnnouncement = previewAnnouncement;
 window.closePreviewModal = closePreviewModal;
 window.filterEventsByDate = filterEventsByDate;
 window.clearDateFilter = clearDateFilter;
+window.switchToMonth = switchToMonth;
 
+      // Initialize default view
+      switchView('month');
+      
+      // Initial load
+      loadEvents();
     </script>
   </body>
 </html>

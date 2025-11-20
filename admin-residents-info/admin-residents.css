@@ -561,15 +561,19 @@ body {
 
 .delete-modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: auto;
     padding: 40px;
     border-radius: 15px;
     text-align: center;
     width: 90%;
     max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     animation: slideDown 0.3s ease;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @keyframes fadeIn {
@@ -672,34 +676,85 @@ body {
   }
 }
 
+/* Responsive Button Styles */
+@media (max-width: 1024px) {
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+
+  .btn-cancel,
+  .btn-save {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+  width: 100%;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn-cancel,
+  .btn-save {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 18px;
+  }
+}
 
 /* Responsive */
 @media (max-width: 480px) {
   .delete-modal-content {
-    padding: 30px 20px;
+    padding: 25px 20px;
     max-width: 320px;
+    max-height: 85vh;
   }
 
   .delete-modal-icon {
     font-size: 50px;
+    margin-bottom: 15px;
   }
 
   .delete-modal-content h2 {
     font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .delete-modal-content p {
     font-size: 14px;
+    margin-bottom: 20px;
   }
 
   .delete-modal-buttons {
     flex-direction: column;
     gap: 10px;
+    margin-top: auto;
   }
 
-  .delete-btn-cancel,
+    .delete-btn-cancel,
   .delete-btn-confirm {
     width: 100%;
     padding: 12px 20px;
+    font-size: 14px;
   }
 }
