@@ -28,7 +28,7 @@ $delete_stmt->close();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_event'])) {
     $title = $conn->real_escape_string($_POST['title']);
     $event_date = $_POST['event_date'];
-    $description = $conn->real_escape_string($_POST['description']);
+    $description = $_POST['description'];
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
     
@@ -927,7 +927,7 @@ window.deleteEvent = deleteEvent;
 
         const descriptionElement = document.getElementById("previewDescription");
         if (event.description && event.description.trim() !== '') {
-          descriptionElement.textContent = event.description;
+          descriptionElement.innerHTML = event.description;
           descriptionElement.parentElement.style.display = 'block';
         } else {
           descriptionElement.textContent = 'No description provided';
