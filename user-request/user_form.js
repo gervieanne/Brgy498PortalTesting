@@ -182,8 +182,10 @@ document.addEventListener("DOMContentLoaded", function () {
             <td style="padding: 10px;">${formData.get("document_type")}</td>
           </tr>
           <tr style="border-bottom: 1px solid #e0e0e0;">
-            <td style="padding: 10px; font-weight: 600;">Purpose:</td>
-            <td style="padding: 10px;">${formData.get("purpose")}</td>
+          <td style="padding: 10px;">${(formData.get("purpose") || "")
+          .replace(/\\r\\n/g, "<br>")
+          .replace(/\\n/g, "<br>")
+          .replace(/\\r/g, "<br>")}</td>
           </tr>
           <tr style="border-bottom: 1px solid #e0e0e0;">
             <td style="padding: 10px; font-weight: 600;">Quantity:</td>

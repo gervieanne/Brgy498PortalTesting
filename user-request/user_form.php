@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
     
     // Document details
     $document_type = $conn->real_escape_string($_POST['document_type']);
-    $purpose = $conn->real_escape_string($_POST['purpose']);
+    $purpose = trim($_POST['purpose']);
     $quantity = intval($_POST['quantity']);
 
     // Server-side validation
