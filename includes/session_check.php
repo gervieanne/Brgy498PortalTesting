@@ -44,7 +44,7 @@ function requireUserAuth() {
         session_destroy();
         
         // Redirect to login
-        header("Location: ../BRGY498PORTAL/user-login/user-login.php");
+        header("Location: ../user-login/user-login.php");
         exit();
     }
     
@@ -52,7 +52,7 @@ function requireUserAuth() {
     if (isAdmin()) {
         session_unset();
         session_destroy();
-        header("Location: ../BRGY498PORTAL/user-login/user-login.php");
+        header("Location: ../user-login/user-login.php");
         exit();
     }
 }

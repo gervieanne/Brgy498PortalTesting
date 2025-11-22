@@ -56,6 +56,7 @@ $conn->close();
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <title>Dashboard</title>
   </head>
   <body>
@@ -119,54 +120,338 @@ $conn->close();
           </div>
         </header>
 
-        <div class="stats-container">
-          <div class="stat-card">
-            <p>Total Residents</p>
-            <h1><?php echo $totalResidents; ?></h1>
+        <!-- Dashboard Info Cards -->
+        <div class="quick-actions-bar">
+          <div class="quick-action-card info-card">
+            <div class="quick-action-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="quick-action-content">
+              <h4 id="currentDate">Loading...</h4>
+              <p id="currentDay">Today</p>
+            </div>
+            <div class="quick-action-badge">
+              <i class="fas fa-clock"></i>
+            </div>
           </div>
-          <div class="stat-card">
-            <p>Male</p>
-            <h1><?php echo $maleCount; ?></h1>
+          
+          <div class="quick-action-card info-card">
+            <div class="quick-action-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="quick-action-content">
+              <h4>System Status</h4>
+              <p id="systemStatus">All systems operational</p>
+            </div>
+            <div class="quick-action-badge status-badge active">
+              <i class="fas fa-check-circle"></i>
+            </div>
           </div>
-          <div class="stat-card">
-            <p>Female</p>
-            <h1><?php echo $femaleCount; ?></h1>
+          
+          <div class="quick-action-card info-card">
+            <div class="quick-action-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="quick-action-content">
+              <h4>Notifications</h4>
+              <p id="notificationCount">0 new alerts</p>
+            </div>
+            <div class="quick-action-badge notification-badge" id="notificationBadge">
+              <span id="notificationNumber">0</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <p>Seniors</p>
-            <h1><?php echo $seniorsCount; ?></h1>
-          </div>
-          <div class="stat-card">
-            <p>Total Voters</p>
-            <h1><?php echo $votersCount; ?></h1>
+          
+          <div class="quick-action-card info-card">
+            <div class="quick-action-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="quick-action-content">
+              <h4>Today's Activity</h4>
+              <p id="todayActivity">View statistics</p>
+            </div>
+            <div class="quick-action-badge">
+              <i class="fas fa-arrow-trend-up"></i>
+            </div>
           </div>
         </div>
 
-        <div class="charts-container">
-          <div class="chart-widget" id="residentsDemographics">
-            <div class="charts-header">Demographics by Street</div>
-            <canvas id="demographicsChart"></canvas>
+        <!-- Main Dashboard Layout: Charts Carousel Left, Stats Right -->
+        <div class="main-dashboard-layout">
+          <!-- Left Side: Big Charts Carousel (Demographics, Document Requests, etc.) -->
+          <div class="big-charts-panel">
+            <div class="big-charts-carousel">
+              <div class="chart-widget big-chart active" data-index="0" id="residentsDemographics">
+                <div class="charts-header">
+                  <div class="chart-header-content">
+                    <div class="chart-icon-wrapper">
+                      <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="chart-title-wrapper">
+                      <h3 class="chart-title">Demographics by Street</h3>
+                      <p class="chart-subtitle">Resident distribution across streets</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="demographicsChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-widget big-chart" data-index="1" id="documentRequest">
+                <div class="charts-header">
+                  <div class="chart-header-content">
+                    <div class="chart-icon-wrapper">
+                      <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="chart-title-wrapper">
+                      <h3 class="chart-title">Document Requests</h3>
+                      <p class="chart-subtitle">Requests by document type</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="documentChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-widget big-chart" data-index="2" id="pendingApplication">
+                <div class="charts-header">
+                  <div class="chart-header-content">
+                    <div class="chart-icon-wrapper">
+                      <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="chart-title-wrapper">
+                      <h3 class="chart-title">Pending Applications</h3>
+                      <p class="chart-subtitle">Awaiting review & processing</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="pendingChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-widget big-chart" data-index="3" id="cancelledRequest">
+                <div class="charts-header">
+                  <div class="chart-header-content">
+                    <div class="chart-icon-wrapper">
+                      <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="chart-title-wrapper">
+                      <h3 class="chart-title">Cancelled Request</h3>
+                      <p class="chart-subtitle">Cancelled applications</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="cancelledChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-widget big-chart" data-index="4" id="completedRequest">
+                <div class="charts-header">
+                  <div class="chart-header-content">
+                    <div class="chart-icon-wrapper">
+                      <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="chart-title-wrapper">
+                      <h3 class="chart-title">Completed Request</h3>
+                      <p class="chart-subtitle">Successfully processed</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="completedChart"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Big Charts Carousel Navigation -->
+            <div class="big-chart-navigation">
+              <button class="big-chart-nav-btn prev-btn" id="prevChartBtn" aria-label="Previous Chart">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              
+              <div class="big-chart-indicators">
+                <span class="big-chart-indicator active" data-slide="0"></span>
+                <span class="big-chart-indicator" data-slide="1"></span>
+                <span class="big-chart-indicator" data-slide="2"></span>
+                <span class="big-chart-indicator" data-slide="3"></span>
+                <span class="big-chart-indicator" data-slide="4"></span>
+              </div>
+              
+              <button class="big-chart-nav-btn next-btn" id="nextChartBtn" aria-label="Next Chart">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
 
-          <div class="chart-widget" id="documentRequest">
-            <div class="charts-header">Document Requests</div>
-            <canvas id="documentChart"></canvas>
+          <!-- Right Side: Stat Cards (All Visible) -->
+          <div class="stats-panel">
+            <div class="stats-container">
+              <div class="stat-card-vertical" data-index="0">
+                <div class="stat-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number"><?php echo $totalResidents; ?></div>
+                  <div class="stat-label">Total Residents</div>
+                  <div class="stat-description">Registered residents in Barangay 498</div>
+                </div>
+              </div>
+              <div class="stat-card-vertical" data-index="1">
+                <div class="stat-icon">
+                  <i class="fas fa-mars"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number"><?php echo $maleCount; ?></div>
+                  <div class="stat-label">Male</div>
+                  <div class="stat-description">Male population count</div>
+                </div>
+              </div>
+              <div class="stat-card-vertical" data-index="2">
+                <div class="stat-icon">
+                  <i class="fas fa-venus"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number"><?php echo $femaleCount; ?></div>
+                  <div class="stat-label">Female</div>
+                  <div class="stat-description">Female population count</div>
+                </div>
+              </div>
+              <div class="stat-card-vertical" data-index="3">
+                <div class="stat-icon">
+                  <i class="fas fa-user-clock"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number"><?php echo $seniorsCount; ?></div>
+                  <div class="stat-label">Seniors</div>
+                  <div class="stat-description">Residents aged 60 and above</div>
+                </div>
+              </div>
+              <div class="stat-card-vertical" data-index="4">
+                <div class="stat-icon">
+                  <i class="fas fa-vote-yea"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number"><?php echo $votersCount; ?></div>
+                  <div class="stat-label">Total Voters</div>
+                  <div class="stat-description">Eligible voters (18 years and above)</div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="chart-widget" id="pendingApplication">
-            <div class="charts-header">Pending Applications</div>
-            <canvas id="pendingChart"></canvas>
-          </div>
-
-          <div class="chart-widget" id="cancelledRequest">
-            <div class="charts-header">Cancelled Request</div>
-            <canvas id="cancelledChart"></canvas>
-          </div>
-
-          <div class="chart-widget" id="completedRequest">
-            <div class="charts-header">Completed Request</div>
-            <canvas id="completedChart"></canvas>
         </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator" id="scrollIndicator">
+          <div class="scroll-indicator-content">
+            <p>Scroll to see more</p>
+            <div class="scroll-arrow">
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Section: Recent Activity & Quick Stats -->
+        <div class="dashboard-bottom-section">
+          <!-- Recent Activity Feed -->
+          <div class="activity-feed-widget">
+            <div class="widget-header">
+              <div class="widget-header-content">
+                <i class="fas fa-history"></i>
+                <h3>Recent Activity</h3>
+              </div>
+            </div>
+            <div class="activity-list" id="activityList">
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-file-check"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">New document request received</p>
+                  <span class="activity-time">Just now</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">New resident registered</p>
+                  <span class="activity-time">5 minutes ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">Announcement published</p>
+                  <span class="activity-time">1 hour ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">Document request completed</p>
+                  <span class="activity-time">2 hours ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Summary -->
+          <div class="quick-stats-widget">
+            <div class="widget-header">
+              <div class="widget-header-content">
+                <i class="fas fa-chart-line"></i>
+                <h3>Quick Stats</h3>
+              </div>
+            </div>
+            <div class="quick-stats-grid">
+              <div class="quick-stat-item">
+                <div class="quick-stat-icon pending">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="quick-stat-info">
+                  <div class="quick-stat-number" id="pendingCount">0</div>
+                  <div class="quick-stat-label">Pending Requests</div>
+                </div>
+              </div>
+              <div class="quick-stat-item">
+                <div class="quick-stat-icon processing">
+                  <i class="fas fa-spinner"></i>
+                </div>
+                <div class="quick-stat-info">
+                  <div class="quick-stat-number" id="processingCount">0</div>
+                  <div class="quick-stat-label">In Process</div>
+                </div>
+              </div>
+              <div class="quick-stat-item">
+                <div class="quick-stat-icon completed">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="quick-stat-info">
+                  <div class="quick-stat-number" id="completedCount">0</div>
+                  <div class="quick-stat-label">Completed</div>
+                </div>
+              </div>
+              <div class="quick-stat-item">
+                <div class="quick-stat-icon ready">
+                  <i class="fas fa-check-double"></i>
+                </div>
+                <div class="quick-stat-info">
+                  <div class="quick-stat-number" id="readyCount">0</div>
+                  <div class="quick-stat-label">Ready for Pickup</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 

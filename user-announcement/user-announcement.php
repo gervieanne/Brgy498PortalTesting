@@ -130,7 +130,7 @@ $result = $conn->query($sql);
                   // Display scheduled date and time
                   $scheduled_date = new DateTime($row['scheduled_date']);
                   echo '<div class="details">';
-                  echo '<span>Date: ' . $scheduled_date->format('m/d/Y') . '</span>';
+                  echo '<span>Date: ' . $scheduled_date->format('M d, Y') . '</span>';
                   echo '<span>Time: ' . $scheduled_date->format('g:i A') . '</span>';
                   echo '</div>';
                   echo '</div>';

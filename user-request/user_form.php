@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
     if (!empty($errors)) {
         $_SESSION['error_message'] = implode(' | ', $errors);
     } else {
-        // Build resident name from form data (not from session)
-        $resident_name = trim("$first_name $middle_name $last_name " . ($suffix ? $suffix : ''));
+        // Build resident name from form data (not from session) - Format: Last Name, First Name Middle Name
+        $resident_name = trim("$last_name, $first_name $middle_name" . ($suffix ? ' ' . $suffix : ''));
         $full_address = trim("$apartment $street, $barangay, $city, $province");
 
         // Handle file uploads
@@ -248,16 +248,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
                         <h2 class="section-title">PERSONAL INFORMATION</h2>
                         <div class="form-row side-by-side">
                             <div class="form-group">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input type="text" name="last_name" id="last_name" pattern="[A-Za-z\s\-'.]+" onkeypress="return /[A-Za-z\s\-'.]/.test(event.key)" required />
+                            </div>
+                            <div class="form-group">
                                 <label>First Name <span class="required">*</span></label>
                                 <input type="text" name="first_name" id="first_name" pattern="[A-Za-z\s\-'.]+" onkeypress="return /[A-Za-z\s\-'.]/.test(event.key)" required />
                             </div>
                             <div class="form-group">
                                 <label>Middle Name <span class="required">*</span></label>
                                 <input type="text" name="middle_name" id="middle_name" pattern="[A-Za-z\s\-'.]+" onkeypress="return /[A-Za-z\s\-'.]/.test(event.key)" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Last Name <span class="required">*</span></label>
-                                <input type="text" name="last_name" id="last_name" pattern="[A-Za-z\s\-'.]+" onkeypress="return /[A-Za-z\s\-'.]/.test(event.key)" required />
                             </div>
                             <div class="form-group">
                                 <label>Suffix</label>

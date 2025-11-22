@@ -229,7 +229,7 @@ $result = $conn->query($sql);
                   
                   // Image section
                   if ($row['image_path'] && file_exists($row['image_path'])) {
-                      echo '<div class="official-image" style="background-image: url(\'' . $row['image_path'] . '\'); background-size: cover; background-position: center;"></div>';
+                      echo '<div class="official-image"><img src="' . htmlspecialchars($row['image_path']) . '" alt="' . htmlspecialchars($row['name']) . '"></div>';
                   } else {
                       echo '<div class="official-image"></div>';
                   }

@@ -347,10 +347,11 @@ $announcements_result = $conn->query($announcements_sql);
         </a>
       </div>
 
-      <div class="content-box">
-        <div class="content-header">Create Announcement</div>
+      <div class="announcements-layout">
+        <div class="content-box create-announcement-box">
+          <div class="content-header">Create Announcement</div>
 
-        <form class="announcement-form" id="announcementForm" enctype="multipart/form-data">
+          <form class="announcement-form" id="announcementForm" enctype="multipart/form-data">
           <div class="form-group">
             <label>Title</label>
             <input
@@ -371,6 +372,35 @@ $announcements_result = $conn->query($announcements_sql);
 
           <div class="form-group full-width">
             <label>Message</label>
+            <div class="media-buttons-row">
+              <button
+                type="button"
+                class="media-action-btn"
+                id="linkBtn"
+                title="Add Link"
+              >
+                <img src="../images/link-logo.png" alt="link-logo" />
+                <span>Add Link</span>
+              </button>
+              <button
+                type="button"
+                class="media-action-btn"
+                id="imageBtn"
+                title="Add Image"
+              >
+                <img src="../images/attachphoto-logo.png" alt="attachphoto-logo" />
+                <span>Add Image</span>
+              </button>
+              <button
+                type="button"
+                class="media-action-btn"
+                id="videoBtn"
+                title="Add Video"
+              >
+                <img src="../images/attachvideo-logo.png" alt="attachvideo-logo" />
+                <span>Add Video</span>
+              </button>
+            </div>
             <div class="textarea-wrapper">
               <textarea
                 id="messageInput"
@@ -378,41 +408,6 @@ $announcements_result = $conn->query($announcements_sql);
                 required
                 class="message-input"
               ></textarea>
-              <div class="input-icons">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  id="linkBtn"
-                  data-tooltip="Add Link"
-                  title="Add Link"
-                >
-                  <img src="../images/link-logo.png" alt="link-logo" />
-                </button>
-                <button
-                  type="button"
-                  class="icon-btn"
-                  id="imageBtn"
-                  data-tooltip="Add Image"
-                  title="Add Image"
-                >
-                  <img
-                    src="../images/attachphoto-logo.png"
-                    alt="attachphoto-logo"
-                  />
-                </button>
-                <button
-                  type="button"
-                  class="icon-btn"
-                  id="videoBtn"
-                  data-tooltip="Add Video"
-                  title="Add Video"
-                >
-                  <img
-                    src="../images/attachvideo-logo.png"
-                    alt="attachvideo-logo"
-                  />
-                </button>
-              </div>
             </div>
           </div>
 
@@ -453,11 +448,11 @@ $announcements_result = $conn->query($announcements_sql);
             class="hidden-input"
             accept="video/*"
           />
-        </form>
-      </div>
+          </form>
+        </div>
 
-      <!-- Announcement History Section -->
-      <div class="content-box history-box">
+        <!-- Announcement History Section -->
+        <div class="content-box history-box">
         <div class="content-header">Announcement History</div>
         
         <div class="announcements-table">
@@ -498,6 +493,7 @@ $announcements_result = $conn->query($announcements_sql);
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
 
@@ -642,31 +638,6 @@ $announcements_result = $conn->query($announcements_sql);
       </div>
     </div>
 
-    <!-- Link input modal -->
-     <div id="linkModal" class="link-modal">
-      <div class="link-modal-content">
-        <div class="link-modal-header">
-          <h2>Add Link</h2>
-          <span class="close" onclick="closeLinkModal()">&times;</span>
-        </div>
-        <form id="linkForm" onsubmit="insertLink(event)">
-          <div class="form-group">
-            <label for="linkText">Text:</label>
-            <input type="text" id="linkText" placeholder="e.g. Click here" required/>
-          </div>
-          <div class="form-group">
-            <label for="linkURL">Link/URL:</label>
-            <input type="url" id="linkURL" placeholder="e.g. https://example.com" required/>
-            </div>
-          <div class="link-modal-buttons">
-            <button type="button" class="link-btn-cancel" onclick="closeLinkModal()">Cancel</button>
-            <button type="submit" class="link-btn-add">Add Link</button>
-          </div>
-          </form>
-      </div>
-    </div>
-    
-
     <!-- Logout Confirmation Modal -->
     <div id="logoutModal" class="logout-modal">
       <div class="logout-modal-content">
@@ -798,29 +769,19 @@ $announcements_result = $conn->query($announcements_sql);
         }
       });
 
-      // Link button functionality
+      // Link button functionality - using simple prompts instead of modal
       document.getElementById("linkBtn").addEventListener("click", () => {
-        document.getElementById('linkModal').style.display = 'block';
+        const text = prompt("Enter link text:");
+        if (text) {
+          const url = prompt("Enter link URL:");
+          if (url) {
+            const textarea = document.getElementById('messageInput');
+            const link = `[${text}](${url})`;
+            textarea.value += (textarea.value ? '\n' : '') + link;
+            showPopupMessage('Link inserted successfully!', 'success');
+          }
+        }
       });
-
-      function closeLinkModal() {
-        document.getElementById('linkModal').style.display = 'none';
-        document.getElementById('linkForm').reset();
-      }
-
-      function insertLink(e) {
-        e.preventDefault();
-        const text = document.getElementById('linkText').value;
-        const url = document.getElementById('linkURL').value;
-        const textarea = document.getElementById('messageInput');
-        
-        // Insert markdown-style link
-        const link = `[${text}](${url})`;
-        textarea.value += (textarea.value ? '\n' : '') + link;
-        
-        closeLinkModal();
-        showPopupMessage('Link inserted successfully!', 'success');
-      }
 
       // Convert markdown links to HTML
       function convertLinksToHtml(text) {

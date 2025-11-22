@@ -58,79 +58,135 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
         $conn = getDBConnection();
         
         // Query from usercreds with LEFT JOIN to userprofile498
-        $stmt = $conn->prepare("
-            SELECT uc.user_id, uc.username, uc.password, uc.full_name, uc.status, 
-                   uc.account_type, uc.address, uc.date_of_birth, uc.place_of_birth, 
-                   uc.sex, uc.civil_status, uc.occupation, uc.citizenship, 
-                   uc.relation_to_household, uc.contact_number, uc.email,
-                   up.profile_id, up.first_name
-            FROM usercreds uc
-            LEFT JOIN userprofile498 up ON uc.user_id = up.user_id
-            WHERE uc.username = ? AND uc.status = 'active'
-        ");
+        // Check if lockout columns exist first
+        $check_columns = $conn->query("SHOW COLUMNS FROM usercreds LIKE 'login_attempts'");
+        $has_lockout_columns = ($check_columns && $check_columns->num_rows > 0);
+        $stmt = null;
         
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        if ($has_lockout_columns) {
+            // Include login_attempts and is_locked columns
+            $stmt = $conn->prepare("
+                SELECT uc.user_id, uc.username, uc.password, uc.full_name, uc.status, 
+                       uc.account_type, uc.address, uc.date_of_birth, uc.place_of_birth, 
+                       uc.sex, uc.civil_status, uc.occupation, uc.citizenship, 
+                       uc.relation_to_household, uc.contact_number, uc.email,
+                       uc.login_attempts, uc.is_locked,
+                       up.profile_id, up.first_name
+                FROM usercreds uc
+                LEFT JOIN userprofile498 up ON uc.user_id = up.user_id
+                WHERE uc.username = ? AND uc.status = 'active'
+            ");
+        } else {
+            // Columns don't exist - show error message
+            $error_message = "System configuration incomplete. Please run setup_login_lockout.php to enable login lockout feature.";
+            error_log("Login lockout columns not found. Please run setup_login_lockout.php");
+            $stmt = null;
+        }
         
-        if ($result->num_rows === 1) {
+        if ($stmt) {
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            // Setup incomplete - can't proceed
+            $result = null;
+        }
+        
+        if ($result && $result->num_rows === 1) {
             $user = $result->fetch_assoc();
             
-            // Verify password
-            if (password_verify($password, $user['password'])) {
-                // SECURITY CHECK: Block admin accounts from logging in here
-                if ($user['account_type'] !== 'admin' && $user['account_type'] !== 'administrator') {
-                    
-                    // Regenerate session ID to prevent session fixation
-                    session_regenerate_id(true);
-                    
-                    // Set session variables
-                    $_SESSION['user_logged_in'] = true;
-                    $_SESSION['user_id'] = $user['user_id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['full_name'] = $user['full_name'];
-                    $_SESSION['account_type'] = $user['account_type'];
-                    $_SESSION['address'] = $user['address'];
-                    $_SESSION['date_of_birth'] = $user['date_of_birth'];
-                    $_SESSION['place_of_birth'] = $user['place_of_birth'];
-                    $_SESSION['sex'] = $user['sex'];
-                    $_SESSION['civil_status'] = $user['civil_status'];
-                    $_SESSION['occupation'] = $user['occupation'];
-                    $_SESSION['citizenship'] = $user['citizenship'];
-                    $_SESSION['relation_to_household'] = $user['relation_to_household'];
-                    $_SESSION['contact_number'] = $user['contact_number'] ?? '';
-                    $_SESSION['email'] = $user['email'] ?? '';
-                    $_SESSION['profile_id'] = $user['profile_id'];
-                    $_SESSION['first_name'] = $user['first_name'] ?? '';
-                    $_SESSION['login_time'] = time();
-                    $_SESSION['login_ip'] = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                    
-                    // Update last login timestamp
-                    $update_stmt = $conn->prepare("UPDATE usercreds SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?");
-                    $update_stmt->bind_param("i", $user['user_id']);
-                    $update_stmt->execute();
-                    $update_stmt->close();
-                    
-                    // Log successful login
-                    error_log("Successful login: User ID " . $user['user_id'] . " - " . $user['username']);
-                    
-                    // Redirect to dashboard
-                    header("Location: ../user-dashboard/user-dashboard.php");
-                    exit();
-                } else {
-                    $error_message = "Access denied. Please use the admin login portal.";
-                    error_log("Admin account attempted to login via user portal: $username");
-                }
+            // Check if account is locked (handle case where column might not exist)
+            $is_locked = isset($user['is_locked']) ? intval($user['is_locked']) : 0;
+            if ($is_locked) {
+                $error_message = "Your account is locked. Please visit the barangay hall to unlock it.";
+                error_log("Locked account login attempt: $username");
             } else {
-                $error_message = "Invalid username or password.";
-                error_log("Invalid password attempt for user: $username");
+                // Verify password
+                if (password_verify($password, $user['password'])) {
+                    // SECURITY CHECK: Block admin accounts from logging in here
+                    if ($user['account_type'] !== 'admin' && $user['account_type'] !== 'administrator') {
+                        
+                        // Reset login attempts on successful login
+                        if ($has_lockout_columns) {
+                            $reset_stmt = $conn->prepare("UPDATE usercreds SET login_attempts = 0 WHERE user_id = ?");
+                            $reset_stmt->bind_param("i", $user['user_id']);
+                            $reset_stmt->execute();
+                            $reset_stmt->close();
+                        }
+                        
+                        // Regenerate session ID to prevent session fixation
+                        session_regenerate_id(true);
+                        
+                        // Set session variables
+                        $_SESSION['user_logged_in'] = true;
+                        $_SESSION['user_id'] = $user['user_id'];
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['full_name'] = $user['full_name'];
+                        $_SESSION['account_type'] = $user['account_type'];
+                        $_SESSION['address'] = $user['address'];
+                        $_SESSION['date_of_birth'] = $user['date_of_birth'];
+                        $_SESSION['place_of_birth'] = $user['place_of_birth'];
+                        $_SESSION['sex'] = $user['sex'];
+                        $_SESSION['civil_status'] = $user['civil_status'];
+                        $_SESSION['occupation'] = $user['occupation'];
+                        $_SESSION['citizenship'] = $user['citizenship'];
+                        $_SESSION['relation_to_household'] = $user['relation_to_household'];
+                        $_SESSION['contact_number'] = $user['contact_number'] ?? '';
+                        $_SESSION['email'] = $user['email'] ?? '';
+                        $_SESSION['profile_id'] = $user['profile_id'];
+                        $_SESSION['first_name'] = $user['first_name'] ?? '';
+                        $_SESSION['login_time'] = time();
+                        $_SESSION['login_ip'] = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                        
+                        // Update last login timestamp
+                        $update_stmt = $conn->prepare("UPDATE usercreds SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?");
+                        $update_stmt->bind_param("i", $user['user_id']);
+                        $update_stmt->execute();
+                        $update_stmt->close();
+                        
+                        // Log successful login
+                        error_log("Successful login: User ID " . $user['user_id'] . " - " . $user['username']);
+                        
+                        // Redirect to dashboard
+                        header("Location: ../user-dashboard/user-dashboard.php");
+                        exit();
+                    } else {
+                        $error_message = "Access denied. Please use the admin login portal.";
+                        error_log("Admin account attempted to login via user portal: $username");
+                    }
+                } else {
+                    // Wrong password: increment login attempts
+                    $current_attempts = isset($user['login_attempts']) ? intval($user['login_attempts']) : 0;
+                    $attempts = $current_attempts + 1;
+                    $is_locked = ($attempts >= 3) ? 1 : 0;
+                    
+                    // Update login attempts and lock status
+                    if ($has_lockout_columns) {
+                        $update_stmt = $conn->prepare("UPDATE usercreds SET login_attempts = ?, is_locked = ? WHERE user_id = ?");
+                        $update_stmt->bind_param("iii", $attempts, $is_locked, $user['user_id']);
+                        $update_stmt->execute();
+                        $update_stmt->close();
+                    }
+                    
+                    if ($is_locked) {
+                        $error_message = "You have entered the wrong credentials 3 times. Your account is now locked. Please visit the barangay hall to unlock it.";
+                        error_log("Account locked after 3 failed attempts: User ID " . $user['user_id'] . " - $username");
+                    } else {
+                        $remaining = 3 - $attempts;
+                        $error_message = "Invalid username or password. You have $remaining attempt" . ($remaining != 1 ? 's' : '') . " remaining out of 3.";
+                        error_log("Invalid password attempt for user: $username (Attempt $attempts/3)");
+                    }
+                }
             }
         } else {
-            $error_message = "Invalid username or password.";
+            // Username does not exist - show generic error (don't reveal if username exists)
+            $error_message = "Username or password incorrect.";
             error_log("User not found or inactive: $username");
         }
         
-        $stmt->close();
+        if ($stmt) {
+            $stmt->close();
+        }
         $conn->close();
     }
 }

@@ -1025,6 +1025,51 @@ body {
     min-height: 80px;
   }
 }
+
+/* Enhanced Responsive Styles */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-container {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .burger-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 15px 10px;
+  }
+
+  .calendar-grid {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-container {
+    padding: 10px 5px;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .year-month-cell {
+    padding: 10px;
+  }
+}
 /* Force styling for view selector (fix override) */
 .view-selector .view-btn {
     background-color: #f0f0f0 !important;

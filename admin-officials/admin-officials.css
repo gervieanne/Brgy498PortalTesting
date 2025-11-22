@@ -42,7 +42,10 @@ html {
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
+  color: #21205d;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 .close {
@@ -63,8 +66,10 @@ html {
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #21205d;
+  font-size: 14px;
+  letter-spacing: 0.2px;
 }
 
 .form-group input,
@@ -178,6 +183,7 @@ html {
   margin-left: 360px;
   flex: 1;
   background-color: #eeeeee;
+  padding: 0;
 }
 
 .officials-header {
@@ -185,9 +191,9 @@ html {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px 20px 15px 20px;
   background-color: #eeeeee;
-  margin-bottom: -20px;
+  margin-bottom: 0;
 }
 
 .time-and-logo {
@@ -267,10 +273,11 @@ html {
 .officials-grid {
   display: grid;
   position: relative;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 0px 30px 0px 30px;
-  margin-left: 40px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 0px 20px 20px 20px;
+  margin-left: 0;
+  max-width: 100%;
 }
 
 .officials-grid .add-btn {
@@ -299,46 +306,125 @@ html {
 
 .official-card {
   position: relative;
-  background: #d9d9d9;
-  border-radius: 10px;
-  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
   text-align: center;
-  transition: 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  min-height: 370px;
+  min-height: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 340px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards, floatCard 3s ease-in-out 0.6s infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.official-card:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.official-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.official-card:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.official-card:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.official-card:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+.official-card:nth-child(6) {
+  animation-delay: 1s;
+}
+
+.official-card:nth-child(7) {
+  animation-delay: 1.2s;
+}
+
+.official-card:nth-child(8) {
+  animation-delay: 1.4s;
+}
+
+.official-card:nth-child(n+9) {
+  animation-delay: 1.6s;
+}
+
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .official-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+  animation-play-state: paused;
 }
 
 .official-image {
   width: 100%;
-  height: 200px;
-  background-color: #b8b8b8;
-  border-radius: 10px;
-  margin-bottom: 15px;
+  min-height: 280px;
+  max-height: 280px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.official-image img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
 }
 
 .official-info {
   text-align: center;
   margin-bottom: auto;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
 .official-info h3 {
-  font-size: 16px;
+  font-size: 14px;
   color: #21205d;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
+  font-weight: 600;
 }
 
 .official-info p {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   margin-bottom: 0;
 }
@@ -362,10 +448,10 @@ html {
 .edit-btn,
 .delete-btn {
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px;
   transition: all 0.3s ease;
   font-weight: 500;
   font-family: "Poppins", sans-serif;
@@ -408,8 +494,8 @@ html {
   }
 
   .officials-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
     padding: 20px;
   }
 }
@@ -462,8 +548,8 @@ html {
   }
 
   .officials-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
     padding: 20px;
   }
 }
@@ -518,11 +604,11 @@ html {
   }
 
   .right-container {
-    margin-left: 250px;
+    margin-left: 0;
   }
 
   .officials-header {
-    margin-left: -250px;
+    margin-left: 0;
     padding: 20px 15px;
   }
 
@@ -539,10 +625,10 @@ html {
   }
 
   .officials-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-left: -210px;
-    width: 90vw;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-left: 0;
+    width: 100%;
     padding: 15px;
   }
 
@@ -608,19 +694,19 @@ html {
   }
 
   .officials-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 12px;
-    margin: 0% 3%;
   }
 
   .official-card {
     padding: 15px;
-    min-height: 400px;
+    min-height: 350px;
   }
 
   .official-image {
-    height: 250px;
+    min-height: 200px;
+    max-height: 200px;
     margin-bottom: 10px;
   }
 
@@ -664,6 +750,36 @@ html {
     transition: left 0.3s ease;
     width: 280px;
     padding: 12px;
+  }
+
+  .officials-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 10px;
+  }
+
+  .official-card {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .official-image {
+    min-height: 200px;
+    max-height: 250px;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    padding: 20px 15px;
+    margin: 5% auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .edit-confirm-modal-content,
+  .delete-modal-content {
+    max-width: 95%;
+    padding: 20px 15px;
   }
 
   .sidebar h1 {
@@ -720,7 +836,7 @@ html {
 
   .officials-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
     margin: 0% 5%;
     padding: 10px;
   }
@@ -836,13 +952,16 @@ html {
   color: #dc3545;
   font-size: 24px;
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 .delete-modal-content p {
-  color: #666;
-  font-size: 16px;
+  color: #555;
+  font-size: 15px;
   margin-bottom: 30px;
+  line-height: 1.6;
+  letter-spacing: 0.1px;
 }
 
 .delete-modal-buttons {
@@ -983,13 +1102,16 @@ html {
   color: #21205d;
   font-size: 24px;
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 .edit-confirm-modal-content p {
-  color: #666;
-  font-size: 16px;
+  color: #555;
+  font-size: 15px;
   margin-bottom: 30px;
+  line-height: 1.6;
+  letter-spacing: 0.1px;
 }
 
 .edit-confirm-modal-buttons {

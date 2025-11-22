@@ -568,9 +568,26 @@ form {
   .down-arrow {
     display: flex;
     background-color: #21205d;
+    border: 2px solid #6EA2B3;
     bottom: 20px;
     width: 45px;
     height: 45px;
+  }
+
+  .down-arrow svg {
+    stroke: #6EA2B3;
+  }
+
+  .blueback-btn {
+    border: 2px solid #6EA2B3;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: #21205d;
+  }
+
+  .blueback-btn:hover {
+    background-color: #2c2b85;
+    border-color: #6EA2B3;
   }
 
   input {
@@ -638,6 +655,8 @@ form {
 
   .down-arrow {
     display: flex;
+    background-color: #21205d;
+    border: 2px solid #6EA2B3;
     bottom: 15px;
     width: 40px;
     height: 40px;
@@ -646,6 +665,19 @@ form {
   .down-arrow svg {
     width: 20px;
     height: 20px;
+    stroke: #6EA2B3;
+  }
+
+  .blueback-btn {
+    border: 2px solid #6EA2B3;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: #21205d;
+  }
+
+  .blueback-btn:hover {
+    background-color: #2c2b85;
+    border-color: #6EA2B3;
   }
 
   .subheader {

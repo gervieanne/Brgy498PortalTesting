@@ -21,7 +21,7 @@ if (cancelLogout) {
   });
 }
 
-// ✅ FIXED: Use absolute path to ensure it always works
+// ✅ FIXED: Use relative path based on current location
 if (confirmLogout) {
   confirmLogout.addEventListener("click", () => {
     console.log("=== LOGOUT DEBUG START ===");
@@ -36,14 +36,19 @@ if (confirmLogout) {
     console.log("Path:", currentPath);
     console.log("Origin:", currentOrigin);
 
-    // Use absolute path from root
-    const logoutUrl = "/BRGY498PORTAL/logout.php";
+    // Use relative path based on current location
+    // Determine if we're in a subdirectory (admin-* or user-* folders)
+    const isInSubfolder = currentPath.includes("/admin-") || currentPath.includes("/user-");
+    
+    // Build logout URL - if in subfolder, go up one level to root
+    const logoutUrl = isInSubfolder ? "../logout.php" : "logout.php";
 
-    console.log("Using absolute logout URL:", logoutUrl);
-    console.log("Full logout URL will be:", currentOrigin + logoutUrl);
+    console.log("Current path:", currentPath);
+    console.log("Is in subfolder:", isInSubfolder);
+    console.log("Using logout URL:", logoutUrl);
     console.log("=== LOGOUT DEBUG END ===");
 
-    // Perform redirect with absolute path
+    // Perform redirect with relative path
     window.location.href = logoutUrl;
   });
 }

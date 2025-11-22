@@ -21,7 +21,8 @@ if (isset($_POST['update_resident'])) {
     $first_name = $conn->real_escape_string($_POST['first_name']);
     $middle_name = $conn->real_escape_string($_POST['middle_name']);
     $last_name = $conn->real_escape_string($_POST['last_name']);
-    $full_name = trim($first_name . ' ' . $middle_name . ' ' . $last_name);
+    // Format: Last Name, First Name Middle Name
+    $full_name = trim($last_name . ', ' . $first_name . ' ' . $middle_name);
     $date_of_birth = $conn->real_escape_string($_POST['date_of_birth']);
     $place_of_birth = $conn->real_escape_string($_POST['place_of_birth']);
     $sex = $conn->real_escape_string($_POST['sex']);
@@ -314,9 +315,9 @@ $result = $conn->query($sql);
           <table>
             <thead>
               <tr>
+                <th>Last Name</th>
                 <th>First Name</th>
                 <th>Middle Name</th>
-                <th>Last Name</th>
                 <th>Age</th>
                 <th>Status</th>
                 <th>Gender</th>
@@ -330,17 +331,33 @@ $result = $conn->query($sql);
               <?php
         if ($result->num_rows > 0) {
           while($row = $result->fetch_assoc()) {
-            // Parse full name
-            $name_parts = explode(' ', trim($row['full_name']));
+            // Parse full name - Format: Last Name, First Name Middle Name
+            $full_name_str = trim($row['full_name']);
+            $first_name = '';
             $middle_name = '';
             $last_name = '';
             
-            if (count($name_parts) > 2) {
-              $middle_parts = array_slice($name_parts, 1, -1);
-              $middle_name = !empty($middle_parts) ? substr($middle_parts[0], 0, 1) . '.' : '';
-              $last_name = end($name_parts);
-            } else if (count($name_parts) == 2) {
-              $last_name = $name_parts[1];
+            // Check if name contains comma (new format)
+            if (strpos($full_name_str, ',') !== false) {
+              // Format: Last Name, First Name Middle Name
+              $parts = explode(',', $full_name_str, 2);
+              $last_name = trim($parts[0]);
+              $first_middle = trim($parts[1]);
+              $name_parts = explode(' ', $first_middle);
+              $first_name = !empty($name_parts) ? $name_parts[0] : '';
+              $middle_name = count($name_parts) > 1 ? substr($name_parts[1], 0, 1) . '.' : '';
+            } else {
+              // Fallback for old format: First Middle Last
+              $name_parts = explode(' ', $full_name_str);
+              if (count($name_parts) > 2) {
+                $first_name = $name_parts[0];
+                $middle_parts = array_slice($name_parts, 1, -1);
+                $middle_name = !empty($middle_parts) ? substr($middle_parts[0], 0, 1) . '.' : '';
+                $last_name = end($name_parts);
+              } else if (count($name_parts) == 2) {
+                $first_name = $name_parts[0];
+                $last_name = $name_parts[1];
+              }
             }
             
             // Format contact display
@@ -357,9 +374,9 @@ $result = $conn->query($sql);
             $email_display = !empty($row['email']) ? $row['email'] : 'N/A';
 
             echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($middle_name) . "</td>";
             echo "<td>" . htmlspecialchars($last_name) . "</td>";
+            echo "<td>" . htmlspecialchars($first_name) . "</td>";
+            echo "<td>" . htmlspecialchars($middle_name) . "</td>";
             echo "<td>" . htmlspecialchars($row['age']) . "</td>";
             echo "<td>" . htmlspecialchars($row['civil_status']) . "</td>";
             echo "<td>" . ($row['gender'] == 'M' ? 'Male' : 'Female') . "</td>";
@@ -405,16 +422,16 @@ $result = $conn->query($sql);
           
           <div class="form-row">
             <div class="form-group">
+              <label>Last Name:</label>
+              <input type="text" name="last_name" id="edit_last_name" required>
+            </div>
+            <div class="form-group">
               <label>First Name:</label>
               <input type="text" name="first_name" id="edit_first_name" required>
             </div>
             <div class="form-group">
               <label>Middle Name:</label>
               <input type="text" name="middle_name" id="edit_middle_name" required>
-            </div>
-            <div class="form-group">
-              <label>Last Name:</label>
-              <input type="text" name="last_name" id="edit_last_name" required>
             </div>
           </div>
           
@@ -552,13 +569,33 @@ $result = $conn->query($sql);
             if (data.success) {
               const r = data.resident;
               document.getElementById('edit_user_id').value = r.user_id;
-              document.getElementById('edit_first_name').value = r.first_name || '';
+              // Parse full_name - Format: Last Name, First Name Middle Name
+              let firstName = '';
+              let middleName = '';
+              let lastName = '';
               
-              // Extract middle and last name from full_name
-              const nameParts = r.full_name.split(' ');
-              const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : (nameParts[1] || '');
-              const lastName = nameParts[nameParts.length - 1];
+              if (r.full_name.includes(',')) {
+                // New format: Last Name, First Name Middle Name
+                const parts = r.full_name.split(',').map(s => s.trim());
+                lastName = parts[0] || '';
+                const firstMiddle = parts[1] || '';
+                const nameParts = firstMiddle.split(' ').filter(p => p);
+                firstName = nameParts[0] || '';
+                middleName = nameParts.slice(1).join(' ') || '';
+              } else {
+                // Fallback for old format: First Middle Last
+                const nameParts = r.full_name.split(' ').filter(p => p);
+                if (nameParts.length > 2) {
+                  firstName = nameParts[0] || '';
+                  middleName = nameParts.slice(1, -1).join(' ') || '';
+                  lastName = nameParts[nameParts.length - 1] || '';
+                } else if (nameParts.length === 2) {
+                  firstName = nameParts[0] || '';
+                  lastName = nameParts[1] || '';
+                }
+              }
               
+              document.getElementById('edit_first_name').value = firstName;
               document.getElementById('edit_middle_name').value = middleName;
               document.getElementById('edit_last_name').value = lastName;
               document.getElementById('edit_date_of_birth').value = r.date_of_birth || '';

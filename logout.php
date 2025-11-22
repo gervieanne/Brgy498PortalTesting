@@ -39,8 +39,24 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
-// ✅ FIXED: Correct redirect path
-// Change this to match YOUR actual login page location
-header("Location: ../BRGY498PORTAL/landingpage/index.php");
+// ✅ FIXED: Redirect to landing page
+// Construct the redirect URL properly
+$script_name = $_SERVER['SCRIPT_NAME']; // e.g., /498/Brgy498PortalTesting/logout.php
+$base_path = dirname($script_name);      // e.g., /498/Brgy498PortalTesting
+
+// Clean up the base path
+$base_path = trim($base_path, '/');
+if (!empty($base_path)) {
+    $base_path = '/' . $base_path;
+}
+
+// Build redirect URL
+$redirect_url = $base_path . '/landingpage/index.php';
+
+// Ensure proper formatting (no double slashes)
+$redirect_url = str_replace('//', '/', $redirect_url);
+
+// Redirect
+header("Location: " . $redirect_url);
 exit();
 ?>

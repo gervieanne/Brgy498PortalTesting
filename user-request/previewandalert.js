@@ -76,9 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="preview-section">
         <h3>Personal Information</h3>
         <div class="preview-field"><span class="preview-label">Full Name:</span>
-          <span class="preview-value">${getSafe("first_name")} ${getSafe(
+          <span class="preview-value">${getSafe("last_name")}, ${getSafe("first_name")} ${getSafe(
       "middle_name"
-    )} ${getSafe("last_name")}</span></div>
+    )}</span></div>
         <div class="preview-field"><span class="preview-label">Date of Birth:</span><span class="preview-value">${getSafe(
           "date_of_birth"
         )}</span></div>

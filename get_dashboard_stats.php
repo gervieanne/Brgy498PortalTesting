@@ -17,9 +17,11 @@ if ($conn->connect_error) {
 $conn->set_charset("utf8mb4");
 
 // Get residents count by street
+// Exclude addresses that contain all three street names together (Sisa Basillio Instruccion)
 $streetQuery = "SELECT 
     CASE
         WHEN address LIKE '%IBARRA%' THEN 'Ibarra'
+        WHEN address LIKE '%SISA%' AND address LIKE '%BASILIO%' AND address LIKE '%INSTRUCCION%' THEN NULL
         WHEN address LIKE '%SISA%' THEN 'Sisa'
         WHEN address LIKE '%BASILIO%' THEN 'Basilio'
         WHEN address LIKE '%INSTRUCCION%' THEN 'Instruccion'
@@ -30,13 +32,15 @@ $streetQuery = "SELECT
     END as street,
     COUNT(*) as count
 FROM userprofile498
+WHERE NOT (address LIKE '%SISA%' AND address LIKE '%BASILIO%' AND address LIKE '%INSTRUCCION%')
 GROUP BY street
+HAVING street IS NOT NULL
 ORDER BY count DESC";
 
 $streetResult = $conn->query($streetQuery);
 $streetData = [];
 while ($row = $streetResult->fetch_assoc()) {
-    if ($row['street'] !== 'Other') { // Exclude 'Other' category
+    if ($row['street'] !== 'Other' && $row['street'] !== null) { // Exclude 'Other' category and NULL
         $streetData[$row['street']] = $row['count'];
     }
 }

@@ -85,21 +85,32 @@ $rejected_requests  = fetchRequests($conn, $user_id, ['rejected']);
 -------------------------- */
 $announcements = [];
 
-$check_table = $conn->query("SHOW TABLES LIKE 'announcements'");
-if ($check_table && $check_table->num_rows > 0) {
+try {
+    $check_table = $conn->query("SHOW TABLES LIKE 'announcements'");
+    if ($check_table && $check_table->num_rows > 0) {
+        $sql_announcements = "SELECT * FROM announcements 
+                          WHERE send_to IN ('all', 'residents')
+                          AND (scheduled_date <= DATE_ADD(NOW(), INTERVAL 1 MINUTE) 
+                               OR created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR))
+                          ORDER BY scheduled_date DESC, created_at DESC
+                          LIMIT 20";
 
-    $sql_announcements = "SELECT * FROM announcements 
-                      WHERE send_to IN ('all', 'residents')
-                      ORDER BY scheduled_date DESC, created_at DESC
-                      LIMIT 10";
-
-
-    $result = $conn->query($sql_announcements);
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $announcements[] = $row;
+        $result = $conn->query($sql_announcements);
+        if ($result) {
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $announcements[] = $row;
+                }
+            }
+        } else {
+            // Log error but don't break the page
+            error_log("Announcement query error: " . $conn->error);
         }
     }
+} catch (Exception $e) {
+    // Log error but don't break the page
+    error_log("Announcement fetch error: " . $e->getMessage());
+    $announcements = [];
 }
 
 $conn->close();
@@ -119,6 +130,7 @@ $conn->close();
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body>
@@ -182,11 +194,22 @@ $conn->close();
 
             <div class="content">
 
-                    <!-- Announcements -->
-                    <section class="announcements-section">
-                        <h3 class="section-title">Announcements</h3>
-
-                        <div class="announcements-list">
+                    <!-- Top Section: Announcements (75%) + Info Cards (25%) -->
+                    <div class="top-dashboard-section">
+                        <!-- Announcements -->
+                        <section class="announcements-section">
+                            <h3 class="section-title">Announcements</h3>
+                            
+                            <?php if (count($announcements) > 1): ?>
+                                <button class="announcement-nav prev" id="prevAnnouncementBtn" type="button" aria-label="Previous Announcement">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="announcement-nav next" id="nextAnnouncementBtn" type="button" aria-label="Next Announcement">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            <?php endif; ?>
+                            
+                            <div class="announcements-list">
 
                             <?php if (!empty($announcements)): ?>
                                 <?php foreach ($announcements as $index => $a): ?>
@@ -218,6 +241,21 @@ $conn->close();
                                             <?php echo htmlspecialchars($a['title']); ?>
                                         </h4>
 
+                                        <?php if (!empty($image_path)): ?>
+                                            <div class="announcement-media">
+                                                <img src="<?php echo $image_path; ?>" alt="<?php echo htmlspecialchars($a['title']); ?>" class="announcement-image" />
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($video_path)): ?>
+                                            <div class="announcement-media">
+                                                <video class="announcement-video" controls>
+                                                    <source src="<?php echo $video_path; ?>" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        <?php endif; ?>
+
                                         <p class="announcement-preview"><?php echo htmlspecialchars($preview); ?></p>
 
                                         <div class="details">
@@ -237,10 +275,67 @@ $conn->close();
                             <?php else: ?>
                                 <div class="empty-state"><p>No announcements available.</p></div>
                             <?php endif; ?>
+                            </div>
+                        </section>
 
-                        </div>
-                    </section>
+                        <!-- Info Cards Sidebar -->
+                        <section class="info-cards-sidebar">
+                            <div class="user-info-card">
+                                <div class="user-info-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="user-info-content">
+                                    <h4 id="userCurrentDate">Loading...</h4>
+                                    <p id="userCurrentDay">Today</p>
+                                </div>
+                                <div class="user-info-badge">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="user-info-card">
+                                <div class="user-info-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="user-info-content">
+                                    <h4>Total Requests</h4>
+                                    <p id="totalRequestsCount"><?php echo count($pending_requests) + count($ready_requests) + count($completed_requests); ?> requests</p>
+                                </div>
+                                <div class="user-info-badge">
+                                    <span><?php echo count($pending_requests) + count($ready_requests) + count($completed_requests); ?></span>
+                                </div>
+                            </div>
+                            
+                            <div class="user-info-card">
+                                <div class="user-info-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="user-info-content">
+                                    <h4>Pending</h4>
+                                    <p><?php echo count($pending_requests); ?> in process</p>
+                                </div>
+                                <div class="user-info-badge pending-badge">
+                                    <span><?php echo count($pending_requests); ?></span>
+                                </div>
+                            </div>
+                            
+                            <div class="user-info-card">
+                                <div class="user-info-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="user-info-content">
+                                    <h4>Ready</h4>
+                                    <p><?php echo count($ready_requests); ?> ready for pickup</p>
+                                </div>
+                                <div class="user-info-badge ready-badge">
+                                    <span><?php echo count($ready_requests); ?></span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
 
+                <!-- Request Sections Grid -->
+                <div class="requests-grid-container">
                 <!-- Pending Requests -->
                 <section class="pending-request-section">
                     <h3 class="section-title">Pending Requests</h3>
@@ -317,39 +412,31 @@ $conn->close();
                         <?php endif; ?>
                     </div>
                 </section>
+                </div>
 
-                <!-- Rejected -->
-                <section class="rejected-request-section">
-                    <h3 class="section-title">Rejected</h3>
-                    <div class="rejected-request-list">
-                        <?php if (!empty($rejected_requests)): ?>
-                            <?php foreach ($rejected_requests as $req): ?>
-                                <div class="rejected-request-card">
-                                    <div class="details">
-                                        <p><strong>Request ID:</strong> 
-                                            REQ-<?php echo str_pad(isset($req['request_id']) ? $req['request_id'] : 0, 3, '0', STR_PAD_LEFT); ?>
-                                        </p>
-                                        <p><strong>Type:</strong> <?php echo htmlspecialchars($req['document_type'] ?? 'N/A'); ?></p>
-                                        <p><strong>Purpose:</strong> <?php echo htmlspecialchars($req['purpose'] ?? 'N/A'); ?></p>
-                                        <p><strong>Date Requested:</strong> 
-                                            <?php echo isset($req['date_requested']) ? date('M d, Y', strtotime($req['date_requested'])) : 'N/A'; ?>
-                                        </p>
-                                        <p><strong>Rejected Date:</strong> 
-                                            <?php echo isset($req['date_updated']) ? date('M d, Y', strtotime($req['date_updated'])) : (isset($req['date_requested']) ? date('M d, Y', strtotime($req['date_requested'])) : 'N/A'); ?>
-                                        </p>
-                                        <p class="status-rejected">
-                                            <strong>Status:</strong> Rejected — 
-                                            <em><?php echo htmlspecialchars($req['rejection_reason'] ?? 'No reason provided'); ?></em>
-                                        </p>
-                                    </div>
+                <!-- Recent Activity Section -->
+                <div class="dashboard-bottom-section">
+                    <div class="activity-feed-widget">
+                        <div class="widget-header">
+                            <div class="widget-header-content">
+                                <i class="fas fa-history"></i>
+                                <h3>Recent Activity</h3>
+                            </div>
+                        </div>
+                        <div class="activity-list" id="userActivityList">
+                            <!-- Activity items will be populated by JavaScript -->
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file-alt"></i>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="empty-state"><p>No rejected requests.</p></div>
-                        <?php endif; ?>
+                                <div class="activity-content">
+                                    <p class="activity-text">Loading recent activity...</p>
+                                    <span class="activity-time">Just now</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </section>
-
+                </div>
 
             </div>
         </main>
